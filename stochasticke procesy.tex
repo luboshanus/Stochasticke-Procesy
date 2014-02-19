@@ -1,0 +1,1251 @@
+\documentclass[10pt]{article}
+
+% Setting up XeLaTeX plus fonts
+\usepackage{fontspec} 
+\defaultfontfeatures{Mapping=tex-text}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\setmainfont[Mapping=tex-text]{Linux Libertine}
+
+% Language selection and language specific settings
+\usepackage{polyglossia}
+\setdefaultlanguage{czech}
+
+% Setting up math
+\usepackage{amsmath}
+
+\usepackage{amsthm}
+\newtheorem{mydef}{\textsc{Definice}}
+\newtheorem{note}{\textsc{Poznámka}}
+\newtheorem{proposition}{\textsc{Věta}}
+
+\DeclareMathOperator*{\var}{Var}
+\DeclareMathOperator*{\cov}{Cov}
+
+% Geometry of the page settings
+\usepackage{geometry}
+\geometry{a4paper}
+
+% Including graphics
+\usepackage{graphicx}
+
+% Name and author data
+\title{Stochastické procesy\footnote{Přednášky p. K. Sladkého.}}
+\author{Tomáš Křehlík}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Některé důležité typy náhodných procesů}
+
+Předpokládáme, že $X(t)$ nabývá reálných hodnot, $t \in T \equiv [0, \infty)$.
+
+\subsection{Procesy se stacionárními nezávislými přírůstky}
+\label{sec:1.1}
+Uvažujme náhodný proces $\{X(t), t \geq 0\}$. Jestliže pro libovolně zvolené časové okamžiky $t_1<t_2<...<t_n$ náhodné proměnné $X(t_2)-X(t_1),X(t_3)-X(t_2),...,X(t_n)-X(t_{n-1})$ jsou nezávislé, potom $\{X(t),t \geq 0\}$ je proces s nezávislými přírůstky.
+
+Jestliže ($t_1\in T$ je zvoleno libovolně), podobně $h>0, X(t_1+h)-X(t_1)$ závisí pouze na $h$ (a ne na $t_1$), potom $\{X(t),t \geq 0\}$ je proces se stacionárními přírůstky.
+
+Pro procesy se stacionárními nezávislými přírůstky (když $E(X_t)<\infty$) platí 
+\begin{equation}
+E[X(t)] = m_0 + m_1 t,
+\end{equation}
+kde $m_0=E[X(0)], m_1 = E[X(1)]-m_0$ a obdobně
+\begin{equation}
+\var[X(t)] = \var[X(0)] + \{\var[X(1)]-\var[X(0)]\} t,
+\end{equation}
+Výše uvedené vztahy lze odvodit následovně:
+Nechť $f(t) = E[X(t)]-E[X(0)]$. Protože $X(t)$ je proces se stacionárními nezávislými přírůstky máme
+\begin{equation}
+\begin{split}
+f(t+s)	&=E[X(t+s)]-E[X(0)]\\
+		&=E[X(t+s)-X(s)+X(s)-X(0)]\\
+		&=E[X(t+s)-X(s)]+E[X(s)-X(0)]\\
+		&=E[X(t)-X(0)]+E[X(s)-X(0)]\\
+		&=f(t)+f(s).
+\end{split}
+\end{equation}
+O funkcionální rovnici $f(t+x) = f(t)+f(x)$ lze ukázat, že funkce $f(t)=f(1)t$ je jejím jediným řešením. Tedy
+\begin{equation}
+f(t) = \left\{E[X(1)]-E[X(0)]\right\}t = E[X(t)]-E[X(0)].
+\end{equation}
+
+Obdobně odvodíme i vztah pro $\var[X(t)]$.
+
+Mezi nejznámější procesy, které patří do kategorie procesů se stacionárními nezávislými přírůstky, lze zařadit Poissonův a Wienerův proces.\footnote{Malý exkurz do čj. Přivlastňovací přídavná jména utvořená od jmen osob se píší s velkým počátečním písmenem, kdežto obecná utvořená od jmen se píší s malým, tedy například Markovův proces, ale markovský řetězec.}
+
+\subsection{Martingaly}
+Náhodný proces $\{X(t),t \in T\}$ je martingalem, jestliže pro případ spojitého času, tj. pro $T\in [0,\infty)$
+\begin{enumerate}
+\item $E[|X(t)|]<\infty$ pro všechna $t \in T$
+\item Pro jakoukoliv volbu časových okamžiků $t_1<t_2<...<t_n<t_{n+1}$ platí
+\begin{equation}
+E[X(t_{n+1})|X(t_1)=a_1,...,X(t_n)=a_n] = a_n
+\end{equation}
+\end{enumerate}
+pro případ diskrétního času, tj. pro $T = \{0,1,2,...\}$
+\begin{enumerate}
+\item $E[|X_n|]<\infty$ pro všechna $n=0,1,...$
+\item $E[X_{n+1}|X_0=a_0,X_1=a_1,...,X_n=a_n] = a_n$
+\end{enumerate}
+
+Obdobně, je-li podmínka 2. nahrazena podmínkou
+\begin{gather}
+E[X_{n+1}|X_0=a_0,X_1=a_1,...,X_n=a_n] \geq a_n\\
+E[X_{n+1}|X_0=a_0,X_1=a_1,...,X_n=a_n] \leq a_n
+\end{gather} jde o submartingal a o supermartingal.
+
+Aplikace teorie martingalů:
+\begin{description}
+\item [Teorie her] -- martingal je vlastně vyjádřením podmínek pro spravedlivou hru (očekávaná výhra je rovna vsazené hodnotě bez ohledu na dříve obdržené a vsazené hodnoty).
+\end{description}
+
+Součet nezávislých náhodných veličin s nulovou střední hodnotou je martingalem s diskrétním časovým parametrem. Jsou-li totiž $Z_k, (k=1,2,...)$ nezávislé náhodné proměnné s nulovou střední hodnotou, potom zřejmě $X_n = Z_1 + Z_2 + ... + Z_n$ splňuje podmínky v definici martingalu.
+
+\subsection{Markovské procesy}
+\label{sec:1.3}
+Náhodný proces $\{X(t),t \in T\}$ je markovským procesem, jestliže vývoj procesu v čase $s>t$ (tj. hodnoty $X(s)$) závisí pouze na hodnotě $X(t)$ a ne na hodnotách $X(n)$, kde $n<t$.
+
+Nechť $t_1<t_2<...<t_n<t$ jsou pro libovolně zvolené hodnoty z $T$.
+
+Tuto skutečnost můžeme formálně zapsat následovně:
+\begin{equation}
+\label{eq:1}
+\begin{split}
+P\{a<X(t) 	& \leq b | X(t_1)=x_1,X(t_2)=x_2,...,X(t_n)=x_n\}\\
+		&=P\{a<X(t)\leq b |X(t_n)=x_n\}.
+\end{split}
+\end{equation}
+Funkci
+\begin{equation}
+P(x,s,t,A) = P\{X(t)\in A |X(s)=x\},t>s,A \subset \mathbf{R}
+\end{equation}
+nazýváme přechodovou pravděpodobností. Tato funkce má základní význam při studiu markovovských procesů. Rovnici (\ref{eq:1}) lze pomocí přechodové pravděpodobnosti též zapsat ve tvaru 
+\begin{equation}
+\label{eq:2}
+\begin{split}
+P\{a<X(t) 	& \leq b | X(t_1)=x_1,X(t_2)=x_2,...,X(t_n)=x_n\}\\
+		&=P(x_n,t_n,t,A), A=(a,b].
+\end{split}
+\end{equation}
+
+Lze přitom ukázat, že pravděpodobnostní rozložení náhodných veličin $(X(t_1), X(t_2), ..., X(t_n))$ lze určit pomocí počátečního rozložení proměnné $X(t_1)$ a přechodové pravděpodobnosti.
+
+Markovské procesy s konečným nebo spočetným stavovým prostorem někdy nazýváme markovskými (Markovovými) řetězci. Markovské procesy, u kterých jsou trajektorie spojité, se jmenují difusní procesy.
+
+Např. známý Poissonův proces je Markovův řetězec se spojitým časem, Brownův pohyb je difusní proces.
+
+\subsection{Stacionární procesy}
+Stochastický proces $\{X(t),t \in T\}$ (kde $T$ je $(-\infty, \infty),[0,\infty)$ nebo množina celých či dokonce přirozených čísel) je (striktně) stacionární, jestliže pro libovolné $h>0$ a pro libovolně zvolené časové okamžiky $t_1<t_2<...<t_{n-1}<t_{n}$ sdružená rozložení 
+\begin{gather}
+\{X(t_1+h),X(t_2+h),...,X(t_n+h)\}\\
+\{X(t_1),X(t_2),...,X(t_n)\}
+\end{gather} jsou stejná.
+
+Tedy: pro striktně stacionární proces se základní pravděpodobnostní charakteristiky nemění při posunutí v čase.
+
+Proces $\{X(t),t \in T\}$ je kovariančně stacionární má-li konečné 2. momenty a jestliže 
+\begin{equation}
+\cov[X(t),X(t+h)] = E[X(t)E(t+h)] - E[X(t)]E[X(t+h)]
+\end{equation}
+závisí pouze na hodnotě $h$ pro všechna $t \in T$.
+
+Platí-li navíc, že $E[X(t)] = \mu$ uvažovaný proces $\{X(t),t \in T\}$ se nazývá slabě stacionární.
+
+Poznámka. Je třeba rozlišovat mezi stacionárními procesy a procesy se stacionárními nezápornými přírůstky (viz. sekce \ref{sec:1.1}). Poissonův a Wienerův proces jsou procesy se stacionárními nezápornými přírůstky, ale nepatří mezi stacionární procesy. Podobně přechodové pravděpodobnosti markovského procesu (viz. sekce \ref{sec:1.3}) mohou být stacionární, tj. přechodová pravděpodobnost $P(x,s,t,A)$ je funkcí rozdílu $t-s$ avšak markovský proces, u kterého přechodové pravděpodobnosti jsou stacionární, není (obecně) stacionárním procesem.
+
+\subsection{Procesy obnovy}
+
+Proces obnovy (anglicky renewal process) je posloupnost $\{T_k,k=0,1,...\}$ nezávislých, kladných náhodných veličin, které se řídí stejným pravděpodobnostním rozdělením. Náhodná veličina $T_k$ představuje životnost obvykle nějaké součástky nebo technického zařízení.
+
+Zařízení je uvedeno do provozu v okamžiku $t=0$, porouchá se v okamžiku $T_1$ a je okamžitě nahrazeno novým zařízením, které přestane fungovat v okamžiku $T_1+T_2$, atd. Proto název pro takové náhodné procesy je "procesy obnovy" -- anglicky renewal process. Doba $n$-té obnovy je zřejmě rovna $S_n = T_1 + ... + T_n$ a příslušný načítací proces $N_t$ (anglicky renewal counting process) zaznamenává počet záměn zařízení v časovém intervalu $[0,t]$.
+
+Všimněme si, že platí 
+$$N_t=n \text{ pro }S_n\leq t<S_{n+1}, \text{ kde } n=0,1,2,...$$
+
+Procesy obnovy úzce souvisí s Poissonovským procesem, jak uvidíme dále. Poissonův proces je de-facto procesem obnovy, u kterého se jednotlivé $T_k$ řídí negativně exponenciálním rozložením se stejným parametrem.
+
+\subsection{Bodové procesy}
+
+Bodový proces (anglicky point process) má za množinu parametrů $T$ prvky $A \in \mathcal{A}$, kde $\mathcal{A} \subset S \subset R^n$ ($n$ rozměrný prostor). Bodový proces $N(A)$ nabývá nezáporných celočíselných hodnot $\{0,1,2,...,\infty \}$ a "načítá počet bodů v množině $A$", proto musí platit
+\begin{equation}
+\begin{split}
+N(A_1 \cup A_2) = N(A_1) + N(A_2), \text{ jestliže }A_1 \cap A_2 = \emptyset; A_1,A_2 \in \mathcal{A},\\
+N(\emptyset) = 0.
+\end{split}
+\end{equation}
+
+Nechť $S$ je reálná přímka (popř. rovina nebo trojrozměrný prostor). Potom $V(A)$ je délka (popř. plocha nebo trojrozměrný prostor) odpovídající $A$.
+
+$\{N(A),A\subset S\}$ je homogenní Poissonovský bodový proces s intenzitou $\lambda > 0$ jestliže:
+\begin{enumerate}
+\item Pro každé $A \subset S, N(A)$ se řídí Poissonovským rozložením s parametrem $\lambda V(A)$.
+\item Pro libovolnou konečnou množinu $\{A_1,...,A_n\}$, kde $A_k$ jsou vzájemně disjunktní podmnožiny množiny $S$, náhodné proměnné $N(A_1),...,N(A_n)$ jsou nezávislé.
+\end{enumerate}
+
+Každý Poissonovský proces $\{X(t),t\in  [0,\infty) \}$ determinuje Poissonovský bodový proces na $S=[0,\infty)$. V tomto případě pro $A=[s,t],s<t$ klademe $N(A) = X(t)-X(s)$.
+
+\subsection{Wienerův a Poissonův proces}
+V tomto odstavci uvedeme základní vlastnosti dvou velmi důležitých procesů se stacionárními nezápornými přírůstky, a to Wienerova a Poissonova procesu.
+\subsubsection{Wienerův proces}
+Popíšeme nejprve tzv. Brownův pohyb hmotné částice na přímce. Uvažujme polohu hmotné částice v diskrétních časových okamžicích $t=k\Delta t, k=(0,1,2,...).$ Jestliže je částice v okamžiku $t$ v bodě $x$, vlivem náhodných nárazů molekul přejde se stejnými pravděpodobnostmi do sousedních bodů $x+\Delta x$ a $x-\Delta x$. V limitě (kdy $\Delta t \to 0, \Delta x \to 0)$ dostáváme tzv. Brownův pohyb.
+
+Předpokládáme-li, že uvažovaná částice byla v čase $t=0$ v bodě $x=0$, náhodná veličina $X(t)$ označuje její polohu v čase $t$, který je celistvým násobkem $\Delta t$. Zřejmě
+\begin{equation}
+X(0) = 0 \text{ a } X(t) = \sum_{k=1}^{N} X_k
+\end{equation}
+kde
+\begin{equation}
+n \Delta t = t, X_k =  \Delta x, \text{ resp. }X_k =  -\Delta x \text{ s pravděpodobností } \frac{1}{2}.
+\end{equation}
+$X_k$ jsou zřejmě nezávislé náhodné veličiny.
+
+Dále platí:
+\begin{equation}
+X(s+t) = \left[X(s)-X(0) \right] + \left[X(s+t)-X(s) \right], \forall s,t \geq 0.
+\end{equation}
+
+Pro rozptyl tedy platí:
+
+$\left[X(s)-X(0) \right]$ a $\left[X(s+t)-X(s) \right]$ jsou zřejmě nezávislé. Tedy
+\begin{gather}
+X(t) = \sum_{k=1}^{N} X_k \Rightarrow X(s+t)-X(s) = \sum_{k=1}^{N} X_k = X(t)-X(0) = X(t)\\
+\begin{split}
+\var[X(s+t)]	&=\var[X(s)-X(0)] + \var[X(s+t)-X(s)]\\
+			&=\var X(s) + \var X(t).
+\end{split}
+\end{gather}
+Tedy $\var[X(t)] = \sigma^2 t$, kde $\sigma^2$ nazveme koeficientem difuze. (srov. rovnici (3) -- řešení funkcionální rovnice $f(t+s)=f(t)+f(s))$.
+
+Dále pak
+\begin{equation}
+\var[X(t)] = \sum_{k=1}^{N} \var X_k = n \left[\frac{1}{2}(-\Delta x)^2 + \frac{1}{2} (\Delta x)^2 \right] = \frac{t}{\Delta t} (\Delta x)^2.
+\end{equation}
+Tedy 
+\begin{equation}
+\var[X(t)] = \sigma^2 t = \frac{t}{\Delta t} (\Delta x)^2 \Rightarrow \sigma^2 = \frac{(\Delta x)^2}{\Delta t}
+\end{equation}
+a pro střední hodnotu platí
+\begin{equation}
+E[X(t)]=0 \text{ neboť }E[X_k] = 0, k=0,1,..,\frac{t}{\Delta t} = n.
+\end{equation}
+Nyní aplikujeme centrální limitní větu a máme:
+\begin{equation}
+P \left\{ x_1 < \frac{X(s+t)-X(s)}{\sigma \sqrt{t}} \leq x_2 \right\} \simeq \frac{1}{\sqrt{2 \pi}} \int_{x_1}^{x_2} e^{-\frac{t^2}{2}} \ dt
+\end{equation}
+čili jednotlivé "normalizované" přírůstky se řídí normálním rozložením.
+
+Uvedené úvahy nás opravňují zavést pojem Wienerova procesu takto:
+\begin{mydef}
+Standardní Wienerův proces $\{W(t), t \geq 0\}$ je náhodný proces s těmito vlastnostmi
+\begin{enumerate}
+\item $W(0)=0$
+\item Pro každé $0 \leq s<t<\infty$ přírůstek $W(t)-W(s)$ je nezávislý na hodnotách $\{W(\mu), 0 \leq \mu < s\}$ a řídí se normálním rozložením s nulovou střední hodnotou a rozptylem $t-s$.
+\end{enumerate}
+\end{mydef}
+Jinými slovy:
+
+Wienerův proces $\{W(t), t \geq 0\}$ je náhodný proces se stacionárními nezávislými přírůstky, které se řídí normálním rozložením, kde $E[W(t)] = 0, \var[W(t)]=t.$ Pomocí výše uvedených dvou podmínek je Wienerův proces definován v standardních monografiích.
+
+Lze ukázat, že za platnosti těchto dvou podmínek je proces $\{W(t), t \geq 0\}$ spojitý pouze v tom smyslu, že platí 
+$$\lim_{\Delta t \to 0} \frac{P\{|W(t+\Delta t) - W(t)| \geq \delta\}}{\Delta t} = 0,$$
+pro všechna $\delta>0$. V dalším textu proto uvedeme silnější předpoklad:
+\begin{enumerate}
+\item[3.] Trajektorie procesu $\{W(t), t \geq 0\}$ jsou spojité s pravděpodobností 1.
+\end{enumerate}
+(Lze ukázat, že podmínka 3 je slučitelná s podmínkami 1,2 -- důkaz je značně technicky náročný.)
+
+Wienerův proces má následující důležité vlastnosti (jejich odvození je dosti náročné):
+\begin{enumerate}
+\item Trajektorie Wienerova procesu nemá nikde derivaci (s pravděpodobností 1).
+\item Kvadratická variace trajektorie Wienerova procesu na intervalu $[s,t]$ je rovna $t-s$ (s pravděpodobností 1).
+\end{enumerate}
+
+Poznamenejme, že funkce s konečnou variací mají kvadratickou variaci rovnou nule -- tedy z obou vlastností plyne, že trajektorie Wienerova procesu mají na každém intervalu nekonečnou variaci.
+
+Nyní pro libovolné reálné $\mu$ a kladné $\sigma>0$ definujme náhodný proces $$X(t) = \sigma W(t) + \mu t.$$ Zřejmě je $X(t)$ proces s nezávislými stacionárními přírůstky, které se řídí normálním rozložením, a platí $$E[X(t)]=\mu t, E[X(0)]=0, \var [X(t)] = \sigma^2 t.$$ $\{X(t), t \geq 0\}$ nazveme Brownovým pohybem s parametry $(\mu,\sigma)$. Tedy (podle naší definice) Wienerův proces je Brownův pohyb s parametry $\mu = 0, \sigma = 1$.
+
+\subsubsection{Poissonův proces}
+Nejprve zavedeme pojem tzv. načítacího neboli čítacího procesu (anglicky counting process).
+
+Načítací proces $\{N(t),t \geq 0\}$ vyjadřuje celkový počet jistých "událostí", které nastaly do okamžiku $t$, např. počet osob, které vstoupily do obchodu, počet vozidel, které projely křižovatkou apod.
+
+Načítací proces $\{N(t),t \geq 0\}$ má zřejmě tyto vlastnosti:
+\begin{enumerate}
+\item $N(t)\geq0,N(t)$ jsou celočíselné hodnoty.
+\item Je-li $s<t$, potom $N(s) \leq N(t)$.
+\item Je-li $s<t$, potom $N(t)-N(s)$ je počet "událostí", které nastaly v časovém intervalu $(s,t)$.
+\end{enumerate}
+
+Načítací proces $N(t) \equiv X(t)$ je Poissonovým procesem s parametrem $\lambda>0$, jestliže
+\begin{enumerate}
+\item $X(0)=0.$
+\item $X(t)$ má nezávislé přírůstky
+\item Počet "událostí" v intervalu délky $t$ se řídí Poissonovským rozložením s parametrem $\lambda t$. Tedy $$P\{X(t+s)-X(s)=n\}=e^{-\lambda t} \frac{(\lambda t)^n}{n!}; n=0,1,2,...$$
+\end{enumerate}
+
+Trajektorie Poissonova procesu je zobrazena na obrázku \ref{fig:trajektorie}.
+
+\begin{figure}
+\centering
+\setlength{\unitlength}{5cm}
+\begin{picture}(2.5,1)
+\put(0,0){\vector(0,1){1}}
+\put(0,0){\vector(1,0){2.5}}
+
+\multiput(0.38,0)(0,0.05){4}
+{\line(0,1){0.02}}
+\multiput(0.84,0)(0,0.05){8}
+{\line(0,1){0.02}}
+\multiput(1.44,0)(0,0.05){12}
+{\line(0,1){0.02}}
+\multiput(1.81,0)(0,0.05){16}
+{\line(0,1){0.02}}
+
+\put(-0.18,0.94){$X(t)$}
+\put(2.4,-0.1){$t$}
+
+\linethickness{0.5mm}
+\put(0.38,0.2){\circle{0.04}}
+\put(0.84,0.4){\circle{0.04}}
+\put(1.44,0.6){\circle{0.04}}
+\put(1.81,0.8){\circle{0.04}}
+
+\put(0,0){\line(1,0){0.38}}
+\put(0.38,0.2){\line(1,0){0.46}}
+\put(0.84,0.4){\line(1,0){0.6}}
+\put(1.44,0.6){\line(1,0){0.37}}
+\put(1.81,0.8){\line(1,0){0.69}}
+\end{picture}
+
+\caption{Trajektorie Poissonova procesu}
+\label{fig:trajektorie}
+\end{figure}
+
+Z vlastností Poissonova rozložení
+\begin{equation}
+\begin{split}
+E[X(t)] = \lambda t\\
+\var[X(t)] = \lambda t
+\end{split}
+\end{equation}
+Tedy obě veličiny jsou lineární funkcí času $t$.
+
+Alternativně definujeme Poissonovský proces pomocí těchto vlastností:
+\begin{enumerate}
+\item $X(0)=0.$
+\item $X(t)$ má stacionární, nezávislé přírůstky
+\item $P\{X(h)=1\} = \lambda h + \mathcal{O}(h)$
+\item $P\{X(h)\geq 2 \} = \mathcal{O}(h)$
+\end{enumerate}
+
+Zřejmě z naší definice Poissonova procesu okamžitě plyne výše uvedená alternativní definice (stačí rozvést exponenciálu v definici hustoty Poissonova procesu v Taylorovu řadu).
+
+Abychom ukázali ekvivalenci obou definicí (tedy, že z alternativní definice plyne "naše" definice) označme $$P_n(t) = P\{X(t)=n\}$$ a sestavíme nejprve diferenciální rovnici pro $$P_0(t) = P \{X(t)=0\}.$$ Zřejmě:
+\begin{equation}
+\begin{split}
+P_0(t+h) 	&=P\{X(t)=0,X(t+h)-X(t)=0\}\\
+		&=P\{X(t)=0\}P\{X(t+h)-X(t)=0\}\\
+		&=P_0(t)[1-\lambda h + \mathcal{O}(h)].
+\end{split}
+\end{equation}
+Tedy $$\frac{P_0(t+h)-P_0(t)}{h}=-\lambda P_0(t) + \frac{\mathcal{O}(h)}{h}$$ a limitním přechodem máme \begin{equation} \label{eq:3a} \frac{dP_0(t)}{dt} = -\lambda P_0(t).\end{equation} Řešením této diferenciální rovnice je $$P_0(t) = Ke^{-\lambda t} \Rightarrow P_0(t) = e^{-\lambda t}, P_0(0) = 1.$$ (Řešení se provede metodou separace proměnných nebo řešíme jako lineární diferenciální rovnici s konstantními koeficienty.)
+
+Obdobně pro $n>0$
+\begin{equation}
+\begin{split}
+P_n(t+h)	&=P\{X(t+h)=n\}\\
+		&=P\{X(t)=n,X(t+h)-X(t)=0\}\\
+		&+P\{X(t)=n-1,X(t+h)-X(t)=1\}\\
+		&+\sum_{k=2}^n P\{X(t)=n-k,X(t+h)-X(t)=k\}.
+\end{split}
+\end{equation}
+Podle předpokladů 3, 4 však platí
+\begin{equation}
+\begin{split}
+P_n(t+h)	&=P_n(t)P_0(h)+P_{n-1}(t)P_1(h) + \mathcal{O}(h)\\
+		&=(1-\lambda h) P_n(t) + \lambda h P_{n-1}(t) + \mathcal{O}(h).
+\end{split}
+\end{equation}
+Úpravou dostáváme
+\begin{equation}
+\frac{P_n(t+h)-P_n(t)}{h}=-\lambda P_n(t) + \lambda P_{n-1}(t) + \frac{\mathcal{O}(h)}{h}
+\end{equation}
+a opět limitním přechodem dostáváme 
+\begin{equation}
+\label{eq:3b}
+\frac{dP_n(t)}{dt} = -\lambda P_n(t)+\lambda P_{n-1}(t),\text{ kde }P_n(0)=0 \text{ pro }n=1,2,...
+\end{equation}
+
+Tedy při znalosti řešení $P_{n-1}$ můžeme nejít i tvar pro $P_n(t)$ (lineární diferenciální rovnice 1. řádu).
+
+Soustavu rovnic (\ref{eq:3a}), (\ref{eq:3b}) můžeme řešit i takto:
+
+Po úpravě (označíme $\frac{d}{dt}P_n(t) = P_n^\prime(t)$) máme
+\begin{gather}
+e^{\lambda t} [P_n^\prime(t)+ \lambda P_n(t)] = \lambda e^{\lambda t} P_{n-1}(t)\\
+\label{eq:5} \frac{d}{dt}[e^{\lambda t} P_{n}(t)] = \lambda e^{\lambda t} P_{n-1}(t).
+\end{gather}
+
+Protože $P_0(t)=e^{-\lambda t}$ máme pro $n=1$ $$\lambda e^{-\lambda t} P_{1}(t)=\lambda \Rightarrow P_1(t) = (\lambda t+e)e^{-\lambda t}.$$ Avšak $P_1(0)=0$, a proto $P_1(t) = \lambda t e^{-\lambda t}$. Indukcí dokážeme, že \begin{equation}\label{eq:4} P_n(t) = e^{-\lambda t} \frac{(\lambda t)^n}{n!}.\end{equation}
+
+Předpokládejme platnost vztahu (\ref{eq:4}) pro $n-1$. Protože z rovnice (\ref{eq:5}) plyne $$\frac{d}{dt}[e^{\lambda t} P_{n}(t)]=\frac{\lambda^n t^{n-1}}{(n-1)!}$$ jejím řešením dostáváme $$e^{\lambda t} P_{n}(t) = \frac{(\lambda t)^n}{n!}+c.$$ Avšak $P_n(0)=0$, klademe $c=0$ a dostáváme $$e^{\lambda t} P_{n}(t) = \frac{(\lambda t)^n}{n!}$$ a podmínky 3, 4 alternativní definice jsou nahraditelné podmínkou 3 "naší" definice.
+
+\section{Markovovy řetězce}
+\subsection{Základní pojmy}
+Uvažujme náhodný proces $\{X_n, n=0,1,2,... \}$, který může nabývat konečně nebo nejvýše spočetně mnoha hodnot. Hodnoty, které proces nabývá označíme jako stavy procesu nezápornými celými čísly $\{0,1,2,...\}$ Tedy stavový prostor uvažovaného procesu je $$S \equiv \{0,1,2,...\}.$$ Jestliže $X_n=i$, budeme říkat, že proces je v čase $n$ ve stavu $i$. Uvažovaný proces je Markovův řetězec právě tehdy, jestliže platí \begin{equation}
+\begin{split}
+P\{X_{n+1}	&=j|X_{n}=i_{n},X_{n-1}=i_{n-1},...,X_{1}=i_{1},X_{0}=i_{0}\}\\
+			&=P\{X_{n+1}=j|X_{n}=i_{n}\}=p_{ij}
+\end{split}
+\end{equation}
+Tedy slovy, pokud platí:
+
+Je-li proces ve stavu $i$, potom v následujícím uvažovaném časovém okamžiku bude ve stavu $j$ s pravděpodobností $p_{ij}$ (bez ohledu na to, ve kterých stavech se předtím nacházel). Srovnejte též obecnou definici markovského procesu, tj. rovnici (\ref{eq:1}).
+
+Tedy pro $p_{ij}$ (tzv. pravděpodobnost přechodu ze stavu $i$ do stavu $j$) musí platit \begin{equation}p_{ij}\geq 0, \sum_{j \in S} p_{ij} = 1.\end{equation} Symbolem $P$ označíme matici pravděpodobností přechodu $$P = 
+\begin{bmatrix}
+  p_{00} & p_{01} & \dots & p_{0N} \\
+  p_{10} & p_{11} & \dots & p_{1N} \\
+  \vdots &&\ddots&\vdots\\
+  p_{N0} & p_{N1} & \dots & p_{NN}
+ \end{bmatrix}$$ v případě konečného stavového prostoru $S \equiv \{0,1,2,...,N\}$ nebo symbolem $$P = 
+\begin{bmatrix}
+  p_{00} & p_{01} & \dots \\
+  p_{10} & p_{11} & \dots\\
+  \vdots &\vdots&\\
+  p_{i0} & p_{i1} & \dots\\
+  \vdots &\vdots&\ddots
+ \end{bmatrix}$$ 
+ v případě, že stavový prostor $S \equiv \{0,1,2,...\}$ je spočetně nekonečný.
+
+O pravděpodobnostech přechodu $p_{ij}$ obvykle předpokládáme, že nezávisí na $n$ (okamžiky přechodu) a mluvíme proto o homogenních řetězcích; v případě, že $p_{ij}$ jsou funkcí času (tedy závisí na počtu uskutečněných přechodů) uvažovaný řetězec je nehomogenní. Obvykle se předpokládá, že k přechodům dochází v ekvidistantních časových okamžicích -- při některých aplikacích však tento předpoklad nebývá splněn.
+
+Maticím, u kterých jsou prvky vesměs nezáporné a řádkové součty jsou vesměs rovny jedné, se říká stochastické matice; jsou-li alespoň některé z řádkových součtů menší než jedna, mluvíme o substochastických maticích.
+
+Náhodný proces je určen tím, že umíme popsat pravděpodobnosti výskytů jednotlivých stavů v každém uvažovaném okamžiku. Pro případ Markovova řetězce dostáváme:
+\begin{equation}
+\begin{split}
+&P\{X_{n+1}=i_{n+1},X_{n}=i_{n},X_{n-1}=i_{n-1},...,X_{1}=i_{1},X_{0}=i_{0}\}\\
+&=P\{X_{n+1}=i_{n+1}|X_{n}=i_{n},X_{n-1}=i_{n-1},...,X_{1}=i_{1},X_{0}=i_{0}\}\\
+&P\{X_{n}=i_{n},X_{n-1}=i_{n-1},...,X_{1}=i_{1},X_{0}=i_{0}\}\\
+&=p_{i_n,i_{n+1}}P\{X_{n}=i_{n},X_{n-1}=i_{n-1},...,X_{1}=i_{1},X_{0}=i_{0}\}
+\end{split}
+\end{equation}
+a opakováním této úvahy dostáváme
+\begin{equation}
+P\{X_{n+1}=i_{n+1},X_{n}=i_{n},X_{n-1}=i_{n-1},...,X_{1}=i_{1},X_{0}=i_{0}\}=p_{i_0}\prod_{k=0}^{n} p_{i_{k},i_{k+1}},
+\end{equation}
+kde $p_{i_0} \equiv P\{X_0=i_0\}$. Tedy 
+\begin{equation}
+p_{i_1}(1) \equiv P\{X_1=i_1\} = \sum_{j \in S} p_{ji_1}p_j.
+\end{equation}
+Zavedeme-li (řádkové) vektory
+\begin{equation}
+p(k) = [p_0(k),p_1(k),p_2(k),...],
+\end{equation}
+kde $p_i(k) \equiv P\{X_k=i\}$ a pro $k=0$ píšeme $p_i=p_i(0)$ tedy pro (řádkový) vektor počátečních rozložení máme $$p=[p_0,p_1,p_2,...]$$ lehce vidíme, že platí $$p(1) = pP$$ a obdobně lehce dokážeme indukcí, že \begin{equation}
+p(n)=pP^n,
+\end{equation} ($p(n)$ nazýváme vektor absolutních rozložení při $n$-tém přechodu).
+
+Markovův řetězec je tedy plně popsán: pravděpodobnostním rozložením jednotlivých stavů v jednom okamžiku (obvykle na začátku procesu) a maticí pravděpodobností přechodů.
+
+\subsubsection{Příklady}
+vynecháno (strany 98-103)
+\subsection{Chapmanova-Kolmogorovova rovnice}
+Chapmanova-Kolmogorovova rovnice dává návod, jak vypočítat pravděpodobnosti přechodu při $n$ přechodech; tj. hodnoty\footnote{Symbolem $p_{ij}^{(n)}$ značíme prvky matice $P^n$ -- tj. $n$-té mocniny matice pravděpodobností přechodu $P$.)} $$p_{ij}^{(n)} = P\{X_{n+m}=j|X_m=i\}, n \geq 0; i,j \in S.$$ Samozřejmě $$p_{ij}^{(1)}= p_{ij} = P\{X_{m+1}=j|X_m=i\}.$$ Chapmanovu-Kolmogorovovu rovnici lze zapsat ve tvaru:
+\begin{equation}
+\label{eq:chapman}
+p_{ij}^{(n+m)} = \sum_{k \in S} p_{ik}^{(n)} p_{kj}^{(m)},
+\end{equation}
+pro všechna $n,m \geq 0$ a všechna $i,j \in S$. Odvození vztahu (\ref{eq:chapman}) je snadné neboť
+\begin{equation}
+\begin{split}
+p_{ij}^{(n+m)} 	&=P\{X_{n+m}|X_0=i\} = \sum_{k\in S} P\{X_{n+m}=j,X_m=k|X_0=i\}\\
+			&=\sum_{k\in S} P\{X_{n+m}=j|X_m=k,X_0=i\}P\{X_m=k|X_0=i\}\\
+			&=\sum_{k \in S} p_{ik}^{(n)} p_{kj}^{(m)}.
+\end{split}
+\end{equation}
+Uvedené vztahy jsou značně přehlednější při využití následujícího maticového zápisu 
+\begin{equation}
+P^{(n+m)} = P^{(m)}P^{(n)},
+\end{equation} kde matice $P^{(n)}$ je matice pravděpodobností přechodu při $n$ přechodech. Tedy $$P^{(2)} = P^{(1)}P^{(1)}=PP=P^2$$ a obecně (pomocí matematické indukce) platí \begin{equation}P^{(n)} = P^{n-1}P = P^n. \end{equation}
+
+Slovy: Matici pravděpodobností přechodu při $n$ krocích získáme povýšením matice pravděpodobností přechodu na $n$-tou. Srovnej též vztah (36) pro výpočet absolutního rozložení stavů Markovova řetězce při $n$ přechodech.
+
+\subsubsection{Příklady}
+
+vynecháno (str. 105-106)
+
+\subsection{Klasifikace stavů Markovova řetězce}
+Uvedeme nejprve potřebné definice, ilustrativní příklady potom. Říkáme, že stav $j$ je dosažitelný ze stavu $i$, jestliže $p_{ij}^{(n)}>0$ pro jisté $n \geq 0$ (píšeme $i \rightarrow j$, anglicky accessible), tzn. že řetězec se může dostat ze stavu $i$ do stavu $j$. Jestliže stav $j$ je dosažitelný ze stavu $i$ a obdobně stav $i$ je dosažitelný ze stavu $j$, potom jsou stavy $i$ a $j$ sousledné (píšeme $i \leftrightarrow j$, anglicky communicating), tzn. stavy jsou sousledné, jsou-li navzájem dosažitelné.
+
+Vlastnosti sousledných stavů:
+\begin{enumerate}
+\item $i \leftrightarrow i$ (stav je sousledný sám se sebou); srv. $p_{ii}^{(0)} = 1$
+\item $i \leftrightarrow j \Leftrightarrow j \leftrightarrow i$
+\item (tranzitivita) $i \leftrightarrow j, j \leftrightarrow k \Rightarrow i \leftrightarrow k$ (důsledek zavedených pojmů).
+\end{enumerate}
+Sousledné stavy tvoří izolovanou (uzavřenou) třídu stavů. Všechny stavy Markovova řetězce lze rozdělit do (disjunktních) izolovaných tříd stavů. V případě, že Markovův řetězec má jedinou třídu sousledných stavů, potom je řetězec irreducibilní (nerozložitelný).
+\footnote{Příklady -- vynecháno (str. 107-109)}
+
+Pro další analýzu Markovových řetězců zavedeme pravděpodobnosti prvého přechodu ze stavu $i$ do stavu $j$ těmito vztahy:
+\begin{gather}
+f_{ij}^{(n)} = P\{X_n=j|X_m \neq j \text{ pro }m=1,...,n-1;X_0=i\}\\
+f_{ii}^{(n)} = P\{X_n=i|X_m \neq i \text{ pro }m=1,...,n-1;X_0=i\},
+\end{gather}
+kde (46) je pravděpodobnost prvého návratu při $n$ přechodech. Dále \begin{equation}
+f_{ij} = \sum_{n=1}^{N} f_{ij}^{(n)} \leq 1
+\end{equation} je pravděpodobnost, že se řetězec někdy dostane ze stavu $i$ do stavu $j$. Podobně pro $j=i$ je pravděpodobnost návratu do výchozího stavu $i$.
+
+V případě, že $f_{ii}=1$ nazýváme stav $i$ rekurentním (anglicky recurrent). Pokud $f_{ii} < 1$ je stav $i$ tranzientní (anglicky transient).
+
+Předpokládejme, že uvažovaný markovský řetězec se nachází ve stavu $i$ a že tento stav je rekurentní (tedy $f_{ii} = 1$). Potom uvažovaný markovský proces se do stavu $i$ opět vrátí s jednotkovou pravděpodobností a vzhledem k "markovské" vlastnosti se musí uvažovaný proces do stavu $i$ vrátit nekonečně mnohokrát.
+
+Avšak v případě, že se markovský řetězec nachází ve stavu $i$, který je tranzientním stavem (tedy $f_{ii} < 1$), uvažovaný proces se již s pravděpodobností $1-f_{ii}$ do stavu $i$ nikdy nevrátí. Opakováním této úvahy snadno zjistíme, že v tomto případě uvažovaný markovský proces bude ve stavu $i$ právě $n$-krát s pravděpodobností $f_{ii}^{n-1}(1-f_{ii})$ pro $n \geq 1$.\footnote{Všimněme si, že výše uvedený výraz definuje tzv. "geometrické rozdělení" se střední hodnotou $\frac{1}{1-f_{ii}}$, tedy $\frac{1}{1-f_{ii}}$ vyjadřuje očekávaný počet dosažení stavu $i$.}
+
+Tedy, stav $i$ je rekurentní právě tehdy, jestliže očekávaný počet dosažení stavu $i$ je nekonečný (při výchozím stavu $i$). Označíme-li
+\begin{equation}
+A_n = \begin{cases}
+1& X_n=i\\
+0& X_n \neq i.
+\end{cases}
+\end{equation}
+Výraz $\sum_{n=0}^\infty A_n$ je roven celkovému počtu dosažení stavu $i$. Avšak
+\begin{equation}
+\begin{split}
+E\left[\sum_{n=0}^\infty A_n|X_0=i\right]		&=\sum_{n=0}^\infty E[ A_n|X_0=i]\\
+							&=\sum_{n=0}^\infty P\{X_n = i | X_0 = i\} = \sum_{n=0}^\infty p_{ii}^{(n)}.
+\end{split}
+\end{equation}
+Tedy platí:
+Stav $i$ je rekurentní právě tehdy, když $\sum_{n=0}^\infty p_{ii}^{(n)} = \infty$. Stav $i$ je tranzientní právě tehdy, když $\sum_{n=0}^\infty p_{ii}^{(n)} < \infty$.
+Důsledky:
+\begin{enumerate}
+\item Má-li markovský řetězec konečný počet stavů, musí mít alespoň jeden rekurentní stav; v případě, že je (konečný) řetězec nerozložitelný, všechny jeho stavy musí být rekurentní.
+\item Jestliže stav $i$ je rekurentní (resp. tranzientní) a stav $j$ je sousledný se stavem $i$, potom stav $j$ je rekurentní (resp. tranzientní).
+\item Jestliže třída rekurentních stavů obsahuje pouze jeden stav, tento stav se jmenuje absorpční (pohlcující), a po jeho dosažení v něm proces stále setrvává.
+\end{enumerate}
+
+Výše uvedené důsledky plynou z předchozího tvrzení a Chapmanovy-Kolmogorovovy rovnice. Všimněme si totiž, že z rovnice (\ref{eq:chapman}) plyne pro 2 sousledné stavy $i,j$ $$p_{jj}^{(m+n+k)} \geq p_{ji}^{(m)}p_{ii}^{(n)}p_{ij}^{(k)},$$ kde $p_{ji}^{(m)}>0,p_{ij}^{(k)}>0.$ Jestliže $\sum_{n=0}^{\infty} p_{ii}^{(n)} = \infty$, potom též $\sum_{n=0}^{\infty} p_{jj}^{(n)} = \infty$ a obdobně $\sum_{n=0}^{\infty} p_{ii}^{(n)} < \infty$ dostáváme, že $\sum_{n=0}^{\infty} p_{jj}^{(n)} < \infty$.
+
+Obdobně usoudíme, že markovský proces s konečným počtem stavů nemůže mít všechny stavy tranzientní. (Všimněme si, že $\sum_{n=0}^{\infty} p_{jj}^{(n)} < \infty \Rightarrow \lim_{n \to \infty} p_{jj}^{(n)}=0$ a tedy $\sum_{k \in S} p_{ik}^{(n)} \to 0$ pro $n \to \infty$, protože stavový prostor $S$ se předpokládá konečný.)
+\footnote{Příklady -- vynecháno 114-119}
+
+\subsection{Limitní pravděpodobnosti}
+
+Uvažujme Markovův řetězec s maticí pravděpodobností přechodu $$P=
+\begin{bmatrix}
+0.7&0.3\\
+0.4&0.6
+\end{bmatrix}$$ Postupným výpočtem zjistíme, že matice pravděpodobností přechodu budou mít "téměř stejné" řádky. 
+$$P^2 = \begin{bmatrix}
+ 0.61 & 0.39 \\
+ 0.52 & 0.48 \\
+\end{bmatrix};
+P^3 = \begin{bmatrix}
+ 0.583 & 0.417 \\
+ 0.556 & 0.444 \\
+\end{bmatrix}; ...$$
+Dalo by se tedy čekat, že prvky matice $P^{(n)} = P^n$ (tedy hodnoty $p_{ij}^{(n)}$) konvergují (alespoň u nerozložitelné matice $P$) k hodnotám $\pi_j = \hat{p}_j.$
+
+Obecně tomu tak však není. Pokud budeme uvažovat následující protipříklad:
+
+Nechť $$P=
+\begin{bmatrix}
+0&1\\
+1&0
+\end{bmatrix},$$ potom se při umocnění na liché číslo bude tato matice opakovat a při sudém umocnění dostaneme jedničky místo nul a nuly místo jedniček. Tedy bude platit \begin{equation}
+p_{ij}^{(n)} = \begin{cases}
+\delta_{ij} & n \text{ sudé,}\\
+1-\delta_{ij} & n \text{ liché.}
+\end{cases}
+\end{equation}
+
+Z výše uvedených důvodů zavedeme pojem periodických stavů Markovova řetězce. Říkáme, že stav $i$ je periodický s periodou $d \geq 1$, jestliže $p_{ii}^{(n)} = 0$ pro každé $n$, které není dělitelné periodou $d$. Jestliže $d=1$, stav $i$ je aperiodický. V předchozím případě $d=2$.
+
+Lehce se dá ukázat, že v uzavřené třídě stavů Markovova řetězce všechny stavy mají stejnou periodu, popř. všechny stavy jsou aperiodické (obdobný postup jako při dokazování důsledků rekurence ).
+
+Rekurentní stav $i$ Markovova řetězce je pozitivně rekurentní, jestliže očekávané doba návratu do stavu $i$ je konečná. Jestliže řetězec má konečný počet stavů, všechny jeho rekurentní stavy jsou automaticky pozitivně rekurentní, v případě řetězce s nekonečně mnoha stavy může být třída rekurentních stavů třídou nulových rekurentních stavů (anglicky null recurrent, česky též trvalé nulové), když střední doba návratu do výchozího stavu je nekonečná.
+
+Stav $i$, který je pozitivně rekurentní a aperiodický, se jmenuje ergodický stav (ergodické stavy opět tvoří izolovanou třídu stavů, tzv. ergodickou třídu).
+
+Poznámka: Je-li stav $i$ rekurentní, potom $\sum_{n=1}^\infty p_{ii}^{(n)} = \infty$. Je-li $\lim_{n \to \infty} p_{ii}^{(n)} = 0$, dá se ukázat, že stav $i$ je rekurentní nulový, v případě, že $\lim_{n \to \infty} p_{ii}^{(n)} \neq 0$ stav $i$ je pozitivně rekurentní.
+
+Následující věta shrnuje základní poznatky o limitním chování nerozložitelného, aperiodického Markovova řetězce se spočetně-nekonečným počtem stavů.
+
+\begin{proposition}
+Je-li Markovův řetězec nerozložitelný a ergodický (tedy všechny jeho stavy jsou ergodické), potom pro každé $i,j \in S$ existuje \begin{equation}\label{eq:veta11}\lim_{n \to \infty} p_{ij}^{(n)} = \pi_j= \frac{1}{\mu_{jj}},\end{equation} která tedy nezávisí na počátečním stavu $i$, kde $$\mu_{jj}= \sum_{n=1}^\infty n f_{jj}^{(n)}< \infty$$ je střední očekávaná doba návratu do stavu $j \in S.$
+
+Limitní hodnoty $\pi_j$ jsou jediným nezáporným řešením soustavy rovnic
+\begin{equation}
+\label{eq:veta12}
+\begin{split}
+&\pi_j = \sum_{i=0}^\infty \pi_i p_{ij}, j \in S,\\
+&\sum_{j=0}^\infty \pi_j = 1.
+\end{split}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Důkaz vztahu (\ref{eq:veta11}) je možno provést (pro případy, kdy je stavový prostor $S$ spočetný) pomocí základních vztahů z teorie obnovy a nebudeme jej zde uvádět. Pro případ, kdy stavový prostor $S$ je konečný, důkaz lze provést algebraickými přístupy, jak bude dále uvedeno v části \ref{sec:2.5}.
+
+Abychom odvodili (\ref{eq:veta12}), všimněme si, že pro každé $N, \sum_{j=0}^{N}p_{ij}^{(n)} \leq \sum_{j=0}^{\infty}p_{ij}^{(n)} = 1,$ tedy pro $n \to \infty$ z (\ref{eq:veta11}) plyne $\sum_{j=0}^N \pi_j \leq 1.$ Obdobně $$p_{ij}^{(n+1)} = \sum_{k=0}^{\infty} p_{ik}^{(n)} p_{kj} \geq \sum_{k=0}^{N} p_{ik}^{(n)} p_{kj},$$ tedy pro $n \to \infty$ $$\pi_j  \geq \sum_{k=0}^\infty \pi_k p_{kj}, \text{ pro }j \in S.$$
+
+Tato nerovnost však nemůže být ostrá. Dokážeme sporem, neboť $$\sum_{j=0}^{\infty} \pi_j > \sum_{j=0}^{\infty} \sum_{k=0}^\infty \pi_k p_{kj} = \sum_{k=0}^\infty \sum_{j=0}^{\infty} \pi_k p_{kj} = \sum_{k=0}^{\infty} \pi_k,$$ což je spor. Tedy $$\pi_j  = \sum_{k=0}^\infty \pi_k p_{kj}, \text{ pro }j \in S.$$
+
+Abychom ukázali jednoznačnost $\pi_j$ a splnění podmínky $\sum_{j=0}^{\infty} \pi_j = 1$, nechť $\{P_j, j \in S\}$ je libovolné stacionární rozložení uvažovaného Markovova řetězce (tedy $P_j \geq0, \sum_{j=0}^{\infty} P_j = 1$), tedy pro každé $n \geq 0$ $$P_j = P\{X_n = j\} = \sum_{i=0}^{\infty} P\{X_n|X_0=i\}P\{X_0=i\} = \sum_{i=0}^{\infty} p_{ij}^{(n)}P_i.$$ a pro $n \to \infty$ máme $$P_j = \sum_{i=0}^{\infty} \pi_j P_i = \pi_j,$$ a tedy též $\sum_{j=0}^\infty \pi_j = 1$.
+\end{proof}
+Poznámka: V případě, kdy uvažovaný nerozložitelný Markovův řetězec má tranzientní stavy nebo jeho stavy jsou rekurentní nulové $\lim_{n \to \infty} p_{ij}^{(n)} = 0, \mu_{jj} = \sum_{n=1}^{\infty} n f_{jj}^{(n)} = \infty$ a neexistuje žádné stacionární rozložení.
+
+Pro úplnost uvedeme ještě dvě tvrzení o rekurentních a tranzientních stavech nerozložitelného Markovova řetězce
+\begin{proposition}
+Nutnou a postačující podmínkou, aby nerozložitelný Markovův řetězec byl tranzientní (tj. aby jeho všechny stavy byly tranzientní) je, že soustava rovnic $$\sum_{j=0}^{\infty} p_{ij} y_j = y_i \text{ pro }i=1,2,...$$ má omezené řešení, které není rovno konstantě.
+\end{proposition}
+
+\begin{proposition}
+Postačující podmínkou, aby nerozložitelný Markovův řetězec byl rekurentní (tj. aby všechny jeho stavy byly rekurentní) je, že soustava rovnic $$\sum_{j=0}^{\infty} p_{ij} y_j \leq y_i \text{ pro }i=1,2,...$$ má řešení $y_i$ takové, že $y_i \to \infty$ pro $i \to \infty$.
+\end{proposition}
+
+Poznámka: Všimněme si, že pro $S=\{0,1,2,...\}$ z matice $$P= \begin{bmatrix}
+p_{00}&p_{01}&p_{02}&...\\
+p_{10}&p_{11}&p_{12}&...\\
+\vdots&\vdots&\vdots&\ddots
+\end{bmatrix}$$ vytvoříme matici $$\tilde{P}= \begin{bmatrix}
+1&0&0&...\\
+p_{10}&p_{11}&p_{12}&...\\
+\vdots&\vdots&\vdots&\ddots
+\end{bmatrix}$$ a pro sloupcové vektory $y = [y_0,y_1,y_2,...]$ tvrzení zapíšeme takto: 
+\begin{itemize}
+\item $\tilde{P} y = y$ má řešení, kde $y$ není konstantní vektor
+\item $\tilde{P}y \leq y$, kde $y_i \to \infty$ pro $i \to \infty$.
+\end{itemize}
+
+Limitním hodnotám $\pi_j$ někdy také říkáme stacionární pravděpodobnosti uvažovaného Markovova řetězce. Všimněme si totiž obratu použitého v důkazu první věty, že pro $P\{X_0=j\}=\pi_j$ též platí $P\{X_n=j\}=\pi_j$ pro všechna $n \geq 0, j \geq 0$ a za těchto podmínek markovský proces je též stacionárním náhodným procesem (pravděpodobnostní rozložení v každém uvažovaném časovém okamžiku stejné).
+
+V dalším textu se omezíme na Markovovy řetězce s konečným stavovým prostorem. Abychom získali poznatky o limitním chování obecného (rozložitelného) Markovova řetězce, nejprve přepíšeme jeho matici pravděpodobností přechodu do vhodného (tzv. kanonického) tvaru. Po přečíslování jednotlivých stavů Markovova řetězce je možno matici pravděpodobností přechodu (rozložitelného) Markovova řetězce zapsat ve tvaru \begin{equation}\label{eq:matice} P = \begin{bmatrix}
+P_{00} & P_{01} & P_{02}&... & P_{0r}\\
+0& P_{11}&0&...&0\\
+0& 0& P_{22}&...&0\\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & ... & P_{rr}
+\end{bmatrix},\end{equation} kde (obecně rozložitelná) submatice $P_{00}$ obsahuje všechny tranzientní stavy a submatice $P_{11},...,P_{rr}$ odpovídající jednotlivým třídám rekurentních stavů (tedy $P_{11},...,P_{rr}$ jsou nerozložitelné matice, které mohou být $i$ periodické).
+
+Pro případ periodických rekurentních tříd sice $\lim_{n \to \infty} P^n$ neexistuje, ale vždy existuje
+\begin{equation}
+\label{eq:laslim}
+P^* = \lim_{n \to \infty} \frac{1}{n} \sum_{m=0}^{n-1} P^m
+\end{equation}
+(tzv. Cesarovská limita), kdy $$\lim_{n \to \infty} P^n = P^*,$$ pokud limita existuje.
+
+Poznámka: Z (\ref{eq:laslim}) je patrno, že hodnoty $\pi_j$ jsou rovny i očekávané době, po kterou bude proces ve stavu $j$.
+
+Z definice limitní matice $P^*$ okamžitě plyne $$P^* = P P^* = P^* P = P^* P^*.$$ Všimněme si, že v (\ref{eq:matice}) $P_{11},...,P_{rr}$ jsou samy o sobě nerozložitelné matice pravděpodobnosti přechodu -- pokud jsou neperiodické na každou z nich můžeme aplikovat větu 1.
+
+Všimněme si blíže vlastností submatice $P_{00}$. Matice $P_{00}$ je obecně rozložitelná, avšak obsahuje pouze tranzientní stavy, tedy $\lim_{n \to \infty} P_{00}^n = 0$ (nulová matice), konvergence k nule je geometrická, a proto též $\sum_{n=0}^{\infty} P_{00}^n$ existuje a je konečná.
+
+Detailnější poznatky o limitních pravděpodobnostech obsahuje následující věta.
+
+\begin{proposition}
+Použijeme-li rozkladu podle (\ref{eq:matice}) potom
+\begin{enumerate}
+\item Spektrální poloměr matice $P_{00}$ je menší než 1, existuje $(I-P_{00})^{-1}$ a platí $$(I-P_{00})^{-1} = \sum_{n=0}^{\infty} P_{00}^n$$
+\item Limitní matici $P^*$ lze napsat ve tvaru: 
+\begin{equation*}
+\label{eq:rozklad1}
+ P^* = \begin{bmatrix}
+0 & P_{01}^* & P_{02}^*&... & P_{0r}^*\\
+0& P_{11}^*&0&...&0\\
+0& 0& P_{22}^*&...&0\\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & ... & P_{rr}^*
+\end{bmatrix},\end{equation*} kde \begin{gather*}
+P_{0i}^* = (I-P_{00})^{-1} P_{0i} P_{ii}^*\\
+P_{ii}^* = \lim_{n \to \infty} \frac{1}{n} \sum_{m=0}^{n-1} P_{ii}^m
+\end{gather*}pro $i=1,2,...,n.$
+\end{enumerate}
+\end{proposition}
+
+\subsection{Algebraické metody pro Markovovy řetězce}
+\label{sec:2.5}
+Opět se omezíme na Markovovy řetězce s konečným počtem stavů. Připomeňme, že pro absolutní rozložení pravděpodobností při $n$ přechodech platí ($S=\{1,2,...,N\}$) $p(n) = p P^n$, kde $p(n) = [p_1(n),...,p_N(n)], p = [p_1,...,p_N] = p(0).$ $P$ je matice pravděpodobností přechodu typu $N \times N$.
+
+Cílem bude nalézt jednodušší přístup pro výpočet hodnot vektoru $p(n)$ absolutních rozložení a odpovídajících hodnot $P^n$ přechodových pravděpodobností (při $n$ přechodech) než je opakované umocňování matice $P$ a dále podat (algebraicky) jednoduché odvození věty 1 a věty 2.
+
+Nejprve připomeneme definici vlastních čísel a vlastních vektorů matice pravděpodobností přechodu $P$. Vlastní čísla matice $P$ označíme symbolem $\lambda_i$ (pro $i=1,2,...,N$) jsou definována jako řešení maticových rovnic
+\begin{equation}
+x(\lambda_i) P = \lambda_i x(\lambda_i), Py(\lambda_i) = \lambda_i y(\lambda_i),
+\end{equation}
+kde $x(\lambda_i)$ jsou řádkové vektory a $y(\lambda_i)$ jsou sloupcové vektory. Úpravou předchozího vztahu dostáváme $$x(\lambda_i)[P-\lambda_i I] = 0; [P-\lambda_i I]y(\lambda_i)=0,$$kde $I$ je jednotková matice příslušné dimenze.
+
+V případě, kdy výše uvedené maticové rovnice mají netriviální (tj. nenulové) řešení, vlastní čísla $\lambda_i$ nutně musí splňovat vztah $$\text{det}(P-\lambda I)= 0$$ Tedy řešením této rovnice (což je algebraická rovnice $N$-tého stupně) můžeme určit jednotlivá vlastní čísla $\lambda_1, ... , \lambda_N$ a potom z předchozích vztahů je možné nalézt levé a pravé vlastní vektory (všimněme si, že tyto vektory jsou určeny jednoznačně až na multiplikativní konstantu).
+
+Protože matice $P$ jsou nezáporné a jejich řádkové součty jsou rovny jedné, alespoň jedno z vlastních čísel matice $P$ musí být rovno jedné a jemu odpovídající pravý vlastní vektor může být zvolen jako jednotkový vektor.
+
+Dále si všimněme, že s ohledem na vztah (\ref{eq:veta12}) levý vlastní vektor odpovídající vlastnímu číslu $\lambda = 1$ je možno zvolit tak, že $y_1(1) = \pi_1,...,y_N(1) = \pi_N$, kde hodnoty $\pi_1,...,\pi_N$ jsou limitní pravděpodobnosti definované vztahem (\ref{eq:veta12}).
+
+Všechna vlastní čísla $\lambda_i$ jakékoliv stochastické matice $P$ jsou v absolutní hodnotě nanejvýše rovna 1, každá stochastická matice má alespoň jedno vlastní číslo rovno 1.
+
+Obecně platí pro jakoukoliv nezápornou matici toto: Absolutní hodnota libovolného vlastního čísla nezáporné matice je nanejvýše rovna jejímu kladnému vlastnímu číslu. Nezáporná matice má vždy reálné nezáporné vlastní číslo, k němuž lze zvolit nezáporný vlastní vektor.
+
+V dalším textu budeme předpokládat, že matice $P$ (dimenze $N$) má všechna vlastní čísla $\lambda_1,...,\lambda_N$ různá. V případě obecné matice (tj. matice s větším počtem tříd rekurentních stavů) použijeme rozklad (\ref{eq:rozklad1}) a naše úvahy aplikujeme na každou ze submatic $P_{11},...,P_{NN}$, které jsou nerozložitelné a jejich vlastní čísla $\lambda = 1$ jsou násobnosti 1. V případě, že některé další vlastní číslo by bylo násobné, stačí (v příslušné třídě rekurentních stavů) provést perturbaci (tj. malou změnu) prvků tak, aby perturbovaná submatice byla opět stochastická.
+
+Vlastní vektory $x(\lambda_i), y(\lambda_i) (i=1,2,...,N)$ je možno zvolit tak, že $$x(\lambda_i) \cdot y(\lambda_j) = \delta_{ij},$$ kde $\cdot$ značí skalární součin vektorů a $\delta_{ij}$ je Kroneckerův symbol.
+
+Z vektorů $x(\lambda_i), y(\lambda_i)$ můžeme sestavit následující matice (dimenze $N \times N$)
+\begin{equation*}
+X = \begin{bmatrix}
+x(\lambda_1)\\
+x(\lambda_2)\\
+\vdots\\
+x(\lambda_N)
+\end{bmatrix};
+Y=[y(\lambda_1),y(\lambda_2),\dots,x(\lambda_N)]
+.\end{equation*}
+
+Protože $x(\lambda_i) \cdot y(\lambda_j) = \delta_{ij}$ platí $X^{-1} =  Y$ a též $$XPY = \Lambda,$$ kde $\Lambda$ je diagonální matice s vlastními čísly na diagonále. Pak dále platí $P = X^{-1} \Lambda Y^{-1} = Y \Lambda X$.
+
+Dále dostáváme pro jakékoliv $n \geq 0$ (protože $XY=I$)
+\begin{equation}
+\label{eq:vlastnicisla}
+P^n = (Y \Lambda X)^n = Y \Lambda^n X
+\end{equation}
+čili libovolnou mocninu matice $P$ můžeme jednoduše vyjádřit pomocí mocnin diagonální matice $\Lambda$, zřejmě $$\Lambda^n = \begin{bmatrix}
+\lambda_1^n&&&\\
+&\lambda_2^n&&\\
+&&\ddots&\\
+&&&\lambda_N^n
+\end{bmatrix}.$$
+
+Všimněme si dále vztahu (\ref{eq:vlastnicisla}). V případě, kdy (nerozložitelná) matice $P$ je aperiodická, vlastní číslo $\lambda_1 = 1$ a ostatní vlastní čísla jsou v absolutní hodnotě menší než 1. Potom zřejmě platí $$\lim_{n \to \infty} \Lambda^n = \begin{bmatrix}
+1&&&\\
+&0&&\\
+&&\ddots&\\
+&&&0
+\end{bmatrix}.$$
+
+V případě (nerozložitelné) periodické matice se kromě vlastního čísla $\lambda_1 =1$ objeví i další (obecně komplexní) vlastní čísla, jejichž absolutní hodnota je rovna 1. Potom tedy $\lim_{n \to \infty} \Lambda^n$ neexistuje a kromě Cesarovské limity $$\lim_{n \to \infty} \frac{1}{n} \sum_{m=0}^{n-1} \Lambda^m = \begin{bmatrix}
+1&&&\\
+&0&&\\
+&&\ddots&\\
+&&&0
+\end{bmatrix}$$ existují limity typu $\lim_{n \to \infty} \Lambda^{nd}$, kde $d$ je perioda uvažovaného (nerozložitelného) Markovova řetězce.
+
+V případě aperiodické nerozložitelné matice $P$ ze vztahu (\ref{eq:vlastnicisla}) dostáváme
+\begin{equation}
+\lim_{n \to \infty} P^n = Y \begin{bmatrix}
+1&&&\\
+&0&&\\
+&&\ddots&\\
+&&&0
+\end{bmatrix}X=
+[y(1),y(\lambda_2),\dots,x(\lambda_N)]
+\begin{bmatrix}
+1&&&\\
+&0&&\\
+&&\ddots&\\
+&&&0
+\end{bmatrix}
+\begin{bmatrix}
+x(1)\\
+x(\lambda_2)\\
+\vdots\\
+x(\lambda_N)
+\end{bmatrix},
+\end{equation} kde $y(1)$ je jednotkový sloupcový vektor patřičného rozměru. Potom
+
+\begin{equation}
+Y \begin{bmatrix}
+1&&&\\
+&0&&\\
+&&\ddots&\\
+&&&0
+\end{bmatrix}=
+\begin{bmatrix}
+1&&&\\
+1&0&&\\
+1&&\ddots&\\
+1&&&0
+\end{bmatrix},
+\end{equation} a tedy
+
+\begin{equation}
+\lim_{n \to \infty} P^n =
+\begin{bmatrix}
+1&&&\\
+1&0&&\\
+1&&\ddots&\\
+1&&&0
+\end{bmatrix}
+\begin{bmatrix}
+x(1)\\
+x(\lambda_2)\\
+\vdots\\
+x(\lambda_N)
+\end{bmatrix} = \begin{bmatrix}
+x(1)\\
+x(1)\\
+\vdots\\
+x(1)\\
+\end{bmatrix},
+\end{equation} kde $x(1)=x(1)P, x(1)y(1)=1$, tedy 
+
+\begin{equation}
+\begin{matrix}
+x_i(1) = \sum_{j=1}^N x_j(1) p_{ij}\\
+\sum_{j=1}^N x_j(1) =1
+\end{matrix} 
+\cong
+\begin{matrix}
+\pi_i = \sum_{j=1}^N \pi_j p_{ij}\\
+\sum_{j=1}^N \pi_j =1
+\end{matrix}
+\end{equation}
+
+Obdobně můžeme postupovat i v případě periodického řetězce, kdy místo $\lim_{n \to \infty} P^n$ pracujeme s $\lim_{n \to  \infty} \frac{1}{n} \sum_{m=0}^{n-1} \Lambda^m.$
+
+V případě, že matice $P$ je tranzientní (tedy $P=P_{00}$ v rozkladu (\ref{eq:rozklad1})) všechna vlastní čísla jsou v absolutní hodnotě menší než 1 a platí $$\lim_{n \to \infty} \Lambda^n = 0\text{, tudíž } \lim_{n \to \infty} P_{00}^n = 0$$ a rychlost konvergence k nulové matici je dána absolutní hodnotou největšího čísla matice $P_{00}$ (které musí být kladné a menší než 1).\footnote{vynechán ilustrativní příklad 141-143}
+
+\subsection{Procesy větvení}
+Procesy větvení (anglicky branching processes) jsou zvláštním případem Markovových řetězců a popisují následující model:
+
+V populaci každý jedinec vytvoří na konci svého života $j$ potomků s pravděpodobností $p_j,j \geq 0$ (nezávisle na ostatních jedincích). Označíme-li symbolem $X_i$ počet potomků $i$-té generace u náhodného procesu $\{X_n, n=0,1,2,...\}$.
+
+Stavovým prostorem $S$ u tohoto modelu jsou zřejmě celá nezáporná čísla, která vyjadřují počet jedinců $S=\{0,1,2,...\}$.
+
+Stav 0 je zřejmě absorpční (tedy $p_{00}=1$), je-li $p_0>0$ zbývající stavy jsou zřejmě tranzientní (všimněme si, že ze stavu $i>0$ s pravděpodobností $p_0^i$ přejdeme do stavu 0). Tedy: Je-li $p_0 >0$ populace buď vymře nebo počet jedinců roste do nekonečna (kromě absorpčního stavu 0, zbývající stavy musí být tranzientní).
+
+Označme očekávaný počet potomků každého z jedinců symbolem $\mu$, tedy $\mu = \sum_{j=0}^{\infty} j p_j$. Zřejmě $X_n = \sum_{i=1}^{X_{n-1}} Z_i$, kde náhodná veličina $Z_i$ je počet potomků $i$-tého jedince v $(n-1)$-vé generaci (tedy $E[Z_i] = \sum_{j=0}^{\infty} j p_j = \mu$). Pro střední hodnoty máme
+\begin{equation}
+\begin{split}
+E[X_n] 	&=E[E[X_n|X_{n-1}]] = E[E[\sum_{i=1}^{X_{n-1}} Z_i|X_{n-1}]]\\
+		&=E[X_{n-1}\mu] = \mu E[X_{n-1}].
+\end{split}
+\end{equation}
+Předpokládáme-li, že $E[X_0] = 1$, potom $E[X_1] = \mu$ a $E[X_n] = \mu^n$.
+
+Nechť $\pi_0$ označuje pravděpodobnost, že při $X_0 = 1$ populace někdy vymře, tedy $\pi_0 = \lim_{n \to \infty} P\{X_n=0|X_0=1\}$. Zřejmě platí:
+\begin{equation}
+\begin{split}
+\mu^n 	&=E[X_n] = \sum_{j=1}^{\infty} j P\{X_n=j\} \geq \sum_{j=1}^{\infty} 1 P\{X_n=j\}\\
+		&=P\{X_n \geq 1\}.
+\end{split}
+\end{equation}
+
+Limitním přechodem pro $n \to \infty$ se přesvědčíme, že pro $\mu < 1$ $$\lim_{n \to \infty} P\{X_n \geq 1\} = 0,$$ tedy platí při $\mu <1$ platí $\pi_0=1$. Obdobně lze ukázat, že populace vymře i při $\mu = 1$. Závěr: Populace nemusí vymřít jedině tehdy, je-li $\mu>1$.
+
+Předpokládejme proto, že $\mu = \sum_{j=1}^\infty j p_j > 1$ a všimněme si, že
+
+\begin{equation}
+\label{eq:diing}
+\begin{split}
+\pi_0 	&= P\{\text{populace vymře}\} = \sum_{j=0}^\infty P\{\text{populace vymře} | X_1 = j\} p_j\\
+		&= \sum_{j=0}^\infty \pi_0^j p_j
+\end{split}
+\end{equation}
+
+Platí:
+\begin{proposition}
+Nechť $p_0>0, p_0+p_1 < 1$. Potom
+\begin{enumerate}
+\item $\pi_0$ je nejmenší nezáporné číslo, které splňuje vztah (\ref{eq:diing})
+\item $\pi_0 = 1$ právě tehdy, je-li $\mu \leq 1$.
+\end{enumerate}
+\end{proposition}
+
+\section{Poissonův proces}
+Poissonův proces je základní model pro popis posloupnosti výskytů náhodných událostí.
+
+Jak bylo zavedeno v první části, načítací proces $\{N(t), t \geq 0\}$ je Poissonovým procesem s parametrem $\lambda>0$, jestliže
+\begin{enumerate}
+\item $N(0)=0$,
+\item $N(t)$ má stacionární, nezávislé přírůstky,
+\item $P\{N(t+h)-N(t)=1\} = \lambda h + \mathcal{O}(h)$,
+\item $P\{N(t+h)-N(h)\geq 2 \} = \mathcal{O}(h)$.
+\end{enumerate}
+Všimněme si, že podmínky 2-4 lze ekvivalentně zapsat jako
+\begin{enumerate}
+\item[2'.] $\{N(t), t \geq 0\}$ je stacionární proces s nezávislými přírůstky,
+\item[3'.] $P\{N(h)=1\} = \lambda h + \mathcal{O}(h)$,
+\item[4'.] $P\{N(h)\geq 2 \} = \mathcal{O}(h)$.
+\end{enumerate}
+(o funkci $f(t)$ říkáme, že je řádu $\mathcal{O}(h)$, když $\lim_{h \to 0} h^{-1} \mathcal{O}(h) = 0$).
+
+Ukázali jsme také, že Poissonův proces lze zcela ekvivalentně definovat též těmito postuláty:
+
+\begin{enumerate}
+\item $N(0)=0.$
+\item $\{N(t), t \geq 0\}$ je stacionární proces s nezávislými přírůstky
+\item Počet "událostí" v intervalu délky $t$ se řídí Poissonovským rozložením s parametrem $\lambda t$. Tedy $$P\{N(t+s)-N(s)=n\}=e^{-\lambda t} \frac{(\lambda t)^n}{n!}, n=0,1,2,...$$
+\end{enumerate}
+
+Připomeňme, že z vlastností Poissonova rozložení máme
+\begin{equation}
+E[N(t)] = \lambda t; \var[N(t)] = \lambda t.
+\end{equation}
+
+V dalším textu odvodíme některé důležité vlastnosti Poissonova procesu.
+
+Budeme se zabývat rozložením dob mezi jednotlivými (náhodnými) událostmi a studovat rozložení (náhodného) výskytu $n$-té události.
+
+Označme proto symbolem $T_1$ (náhodný) okamžik výskytu 1. události a symbolem $T_n$ (náhodnou) dobu, která uplyne mezi výskytem $(n-1)$-vé a $n$-té události (anglicky interarrival time).
+
+Obdobně označíme symbolem $S_n$ (náhodný) okamžik, ve kterém dojde k $n$-té události (anglicky waiting time until $n$-th event). Zřejmě platí $$S_n = \sum_{i=1}^{n} T_i, n \geq 1.$$ Abychom nalezli pravděpodobnostní rozložení náhodné veličiny $T_n$, všimněme si, že $$P\{T_1>t\} = P\{N(t)=0\}= e^{- \lambda t}$$ (tedy $T_1$ se řídí exponenciálním rozložením s parametrem $\lambda$, zřejmě $P\{T_1 \leq t \} = 1- e^{- \lambda t}$, hustota tohoto rozložení je $f(x) = \lambda e^{- \lambda t}, x \geq 0.$)
+
+Obdobně: $$P\{T_2 > t\} = E[P\{T_2 > t|T_2\}].$$ Avšak pro každé $s<t$
+
+$$P\{T_2|T_1=s\} = P\{\text{žádná událost v }(s,s+t]|T_1=s\}= P\{\text{žádná událost v }(s,s+t]\} = e^{-\lambda t}$$
+
+Opakováním této úvahy dojdeme k důležitému závěru:
+
+\begin{proposition}
+$\{T_n, n=1,2,...\}$ (doby mezi jednotlivými událostmi) jsou nezávislé náhodné veličiny, které se řídí exponenciálním rozložením s parametrem $\lambda$; tedy pro hustotu rozložení náhodné proměnné $T_n (n=1,2,...)$ platí \begin{equation} f(t) = \lambda e^{-\lambda t}. \end{equation}
+\end{proposition}
+
+Abychom odvodili podobný vztah pro $S_n$ (tj. pro náhodný okamžik výskytu $n$-té události) všimněme si (důležitého) vztahu $$S_n \leq t \Leftrightarrow N(t) \geq n$$ tedy pro distribuční funkci hledaného rozložení náhodné veličiny $S_n$ dostáváme:
+
+$$F_{S_n} (t) = P\{S_n \leq t\} = P\{N(t) \geq n\} = \sum_{j=n}^{\infty} e^{-\lambda t} \frac{(\lambda t)^j}{j!}.$$ Odpovídající hustota $f_{S_n} (t)$ musí potom splňovat (po zderivování vztahu pro $F_{S_n} (t)$):
+
+\begin{equation*}
+\begin{split}
+f_{S_n} (t) 	&= - \sum_{j=n}^{\infty} \lambda e^{-\lambda t} \frac{(\lambda t)^j}{j!} + \sum_{j=n}^{\infty} \lambda e^{-\lambda t} \frac{(\lambda t)^{j-1}}{(j-1)!}\\
+			&=  \lambda e^{-\lambda t} \frac{(\lambda t)^{n-1}}{(n-1)!} + \sum_{j=n+1}^{\infty} \lambda e^{-\lambda t} \frac{(\lambda t)^{j-1}}{(j-1)!} - \sum_{j=n}^{\infty} \lambda e^{-\lambda t} \frac{(\lambda t)^j}{j!}\\
+			&=\lambda e^{-\lambda t} \frac{(\lambda t)^{n-1}}{(n-1)!} = \lambda^n e^{-\lambda t} \frac{t^{n-1}}{(n-1)!}.
+\end{split}
+\end{equation*}
+
+Rozložení s touto hustotou se jmenuje gama rozložení s parametry $(n,\lambda)$, jeho střední hodnota je rovna $\frac{n}{\lambda}$ a jeho rozptyl je roven $\frac{n}{\lambda^2}$.
+
+Exponenciální rozložení je zřejmě zvláštním případem gama rozložení pro $n=1$.
+
+Tedy máme:
+
+\begin{proposition}
+$\{S_n, n=1,2,...\}$ (okamžiky výskytu $n$-té události) se řídí gama rozložením s parametry $(n,\lambda)$, pro hustotu tohoto rozložení platí 
+\begin{equation}
+f_{S_n} (t) = \lambda^n e^{-\lambda t} \frac{t^{n-1}}{(n-1)!}.
+\end{equation}
+\end{proposition}
+
+Dalším důsledkem skutečnosti, že Poissonův proces popisuje události, které se "pravděpodobnostně opakují" je následující:
+
+\begin{proposition}
+Platí (pro $T_1>t_0$)
+\begin{equation}
+P\{T_1 \leq t | T_1 > t_0\} = 1-e^{- \lambda (t-t_0)}
+\end{equation}
+(tedy slovně: pravděpodobnost, že sledovaná událost nastane před okamžikem $t$ za podmínky, že k ní nedošlo do okamžiku $t_0$ se řídí exponenciálním rozložením s parametrem $\lambda$).
+\end{proposition}
+
+Důkaz tohoto tvrzení lehce plyne z definice podmíněné pravděpodobnosti, neboť:
+\begin{equation*}
+\begin{split}
+P\{T_1 \leq t | T_1>t_0\} 	&= \frac{P\{t_0<T_1 \leq t\}}{P\{T_1 > t_0\}} = \frac{\int_{t_0}^{t} \lambda e^{-\lambda t} \ d \tau}{e^{-\lambda t_0}}\\
+					&= \frac{e^{-\lambda t_0}-e^{-\lambda t}}{e^{-\lambda t_0}} = 1-e^{-\lambda (t-t_0)}
+\end{split}
+\end{equation*}
+Další důležité vlastnosti Poissonových procesů shrnuje následující věta.
+
+\begin{proposition}
+
+\begin{enumerate}
+\item Nechť $\{N_1(t),t \geq 0\},\{N_2(t),t \geq 0\}$ jsou nezávislé Poissonovy procesy s parametry $\lambda_1, \lambda_2$. Potom $\{N_1(t)+N_2(t), t \geq 0\}$ je opět Poissonův proces s parametrem $\lambda = \lambda_1 + \lambda_2$.
+\item Nechť Poissonův proces $\{N(t),t \geq 0\}$ je "vzorkován" následujícím způsobem. Každá událost je s pravděpodobností $p>0$ přiřazena do třídy I a s doplňkovou pravděpodobností $1-p$ do třídy II. Takto vzniklé procesy označíme $\{N_1(t),t \geq 0\}$ a $\{N_2(t),t \geq 0\}$. Potom $\{N_1(t),t \geq 0\}$ je Poissonův proces s parametrem $\lambda_1 = p \lambda$ a $\{N_2(t),t \geq 0\}$ je Poissonův proces s parametrem $\lambda_2 = (1-p) \lambda$ a oba procesy jsou nezávislé.
+\end{enumerate}
+\end{proposition}
+
+Poznámka: Tvrzení 1 je přímým důsledkem vlastností součtu 2 nezávislých Poissonovských rozložení -- viz Příklad na str.38 a Příklad na str. 47
+
+V závěru této kapitoly pojednáme ještě o jiném zobecnění Poissonova procesu.
+
+Nestacionární Poissonův proces (neboli Poissonův proces s proměnnou intenzitou) je zobecněním výše uvedené definice Poissonova procesu, kde podmínka 3. je nahrazena obecnějším vztahem 
+
+$$P\{N(t+h) N(t)=1\} = \lambda (t) h + \mathcal{O}(h).$$ Označíme-li $m(t) = \int_0^t \lambda(s) \ ds$, potom analogicky ke vztahu 3'. lze ukázat, že platí $$P\{N(t+s)-N(t)=n\} = e^{-m(t+s)+m(t)} \frac{[m(t+s)-m(t)]}{n!}.$$
+Tedy: $N(t+s)-N(s)$ se řídí Poissonovským rozložením se střední hodnotou $m(t+s)-m(s)$.
+
+Všimněme si, že pro $\lambda(s)=\lambda$ máme $m(t)=\lambda t$ a poslední vztah se redukuje na původní 3'.
+
+\section{Markovovy procesy se spojitým časem}
+\subsection{Základní vlastnosti}
+Nechť $\{X(t), t \geq 0\}$ je náhodný proces nabývající hodnot v nanejvýše spočetném stavovém prostoru $S$. Tento proces je markosvký, jestliže
+$$P\{X(t_n)=i_n|X(t_1)=i_1,...,X(t_{n-1})=i_{n-1}\}=P\{X(t_n)=i_n|X(t_{n-1})=i_{n-1}\}$$
+pro všechny časové okamžiky $0 \leq t_1 < t_2 < ... <t_n$ a stavy $i_1,i_2,...,i_n \in S$.
+
+Pro markovský proces $\{X(t),t \geq 0\}$ definujeme pravděpodobnosti přechodu jako funkce $$P_{ij}(t) = P\{X(t)=j|X(0)=i\}, t>0, i,j \in S.$$ Proces $\{X(t), t \geq 0\}$ je homogenní (neboli pravděpodobnosti přechodu jsou stacionární), jestliže $$P\{X(t)=j|X(s)=i\}=P_{ij}(t-s) \text{ pro všechna }i,j \in S, 0 \leq s < t.$$
+
+V dalším textu se omezíme na homogenní Markovské procesy a budeme předpokládat, že 
+\begin{enumerate}
+\item $P_{ij}(t) \geq 0, t >0$ 
+\item $\sum_{j \in S} P_{ij}(t)=1, i \in S, t > 0$
+\item Platnost Chapmanovy-Kolmogorovovy rovnice $$P_{ij}(t) = \sum_{k \in S} P_{ik}(s)P_{kj}(t-s), i,j \in S, 0<s<t.$$
+\item 
+\begin{equation*}
+\lim_{t \to 0^+} P_{ij} =
+\begin{cases}
+  1 & \text{ pro } i=j\\
+  0 & \text{ pro } i \neq j
+\end{cases} 
+\end{equation*}
+(tedy $\lim_{t \to 0^+} P_{ij} = \delta_{ij}$).
+\end{enumerate}
+
+V dalším textu opět zavedeme matici pravděpodobností přechodu $P(\cdot) = [P_{ij}(\cdot)]$. Pro prvky této matice platí:
+\begin{proposition}
+$$q_i=\lim_{t \to 0^+} \frac{1-P_{ii}(t)}{t} = -P^\prime_{ii}(0)$$ existuje pro každé $i \in S$ a je nezáporná (může být i nekonečná).
+\end{proposition}
+\begin{proposition}
+Pro všechna $i,j\in S, i \neq j$ $$q_{ij} = \lim_{t \to 0^+} \frac{P_{ij}(t)}{t} = P^\prime_{ij}(0)$$ existuje a je vždy konečná.
+\end{proposition}
+
+Kde 
+\begin{itemize}
+\item $q_i,q_{ij}$ -- tzv. infinitezimální parametry uvažovaného markovského procesu
+\item $q_i$ -- intenzita výstupu ze stavu $i$
+\item $q_{ij}$ -- intenzita pravděpodobnosti přechodu ze stavu $i$ do stavu $j$
+\end{itemize}
+\begin{proposition}
+$\sum_{j \in S, j \neq i} q_{ij} \leq q_i$ pro každé $i \in S$.
+
+Je-li stavový prostor $S$ konečný, pak vždy platí rovnost.
+\end{proposition}
+
+\begin{proof}
+Z předpokladu 2. máme $\sum_{j \in S, j \neq i} P_{ij} = 1-P_{ii}(t),$ tedy též $$\frac{1}{t} \sum_{j=1,j \neq i}^{N} P_{ij}(t) \leq \frac{1}{t}[1-P_{ii}(t)]$$ (je-li $S$ konečné s $N$ stavy máme rovnost). Tvrzení tedy plyne pokud přejdeme k limitě pro $t \to 0^+$ a využijeme předcházející dvě tvrzení (díky limitnímu přechodu jsme museli stavový prostor $S$ aproximovat konečným stavovým prostorem).
+\end{proof}
+
+\begin{mydef}
+Jestliže platí $$\sum_{j \in S, j \neq i} q_{ij} = q_i < \infty,$$ markovovský proces se jmenuje konservativní (anglicky conservative).
+\end{mydef}
+
+\begin{proposition}
+Pravděpodobnosti přechodu konservativního markovského procesu vyhovují soustavě retrospektivních (zpětných) Kolmogorovových rovnic (anglicky backward Kolmogorov equations)
+\begin{equation}
+\frac{d}{dt}P_{ij}(t) = \sum_{k \in S, k \neq i} q_{ik}P_{kj}(t)-q_iP_{ij}(t), \text{ pro každé }i,j \in S, t>0
+\end{equation}
+\end{proposition}
+
+Obecně platí:
+\begin{proposition}
+Je-li markovský proces konservativní a hodnoty $\{q_i,i \in S\}$ jsou omezené (tedy existuje číslo $K < \infty$ tak, že $q_i<K$ pro každé $i \in S$), potom pravděpodobnosti přechodu splňují též prospektivní (dopředné) Kolmogorovovy rovnice (anglicky forward Kolmogorov equations) ve tvaru
+\begin{equation}
+\frac{d}{dt}P_{ij}(t) = \sum_{k \in S, k \neq i} q_{kj}P_{ik}(t)-q_iP_{ij}(t), \text{ pro každé }i,j \in S, t>0
+\end{equation}
+\end{proposition}
+
+Tyto dvě Kolmogorovovy rovnice lze kompaktněji zapsat po zavedení následující maticové symboliky:
+$$
+P(t) = [P_{ij}(t)]; \frac{d}{dt}P(t) = [\frac{d}{dt}P_{ij}(t)];Q=[q_{ij}], \text{ kde }q_{ii}=-q_i
+$$
+Matice $Q$ se jmenuje matice přechodových intenzit (anglicky transition intensity matrix), někdy se též říká infinitesimal generator matrix. Předpoklady 1.-4. lze pak přepsat následovně:
+\begin{enumerate}
+\item[1'.] $P(t) \geq 0, t>0$
+\item[2'.] $P(t)e = e, t>0$, symbol $e$ značí jednotkový vektor
+\item[3'.] $P(t) = P(s)P(t-s), 0<s<t$
+\item[4'.] $\lim_{t \to 0^+} P(t) = I = [\delta_{ij}]$
+\end{enumerate}
+Retrospektivní a prospektivní Kolmogorovovy rovnice jsou pak ve tvaru:
+\begin{gather}
+\label{eq:retrospectiveKol}
+\frac{d}{dt}P(t) = QP(t), t>0\\
+\label{eq:forwardspectiveKol}
+\frac{d}{dt}P(t) = P(t)Q, t \geq 0
+\end{gather}
+
+\begin{proposition}
+Je-li stavový prostor $S$ konečný (a tedy $\sum_{j \in S,j \neq i}q_{ij}=q_i$ a markovský proces je konzervativní), potom 
+\begin{equation}
+P(t) = e^{tQ} = I + \sum_{n=1}^\infty \frac{1}{n!}(tQ)^n, t \geq 0
+\end{equation}
+\end{proposition}
+\begin{proof}
+Za podmínek tvrzení platí prospektivní Kolmogorovova rovnice a jejím řešením je $P(t)$ definované vztahem (....).
+\end{proof}
+\subsection{Interpretace infinitezimálních parametrů}
+Předpokládejme, že markovský proces je v okamžiku $t>0$ ve stavu $X(t)=i$, označme symbolem $Y_i$ (náhodný) čas, po který zvažovaný markovský proces setrvá ve stavu $i$ (tedy $Y_i$ je doba setrvání procesu ve stavu $i$, anglicky sejourn time) a symbolem $p_{ij}$ označíme pravděpodobnost, že po opuštění stavu $i$ proces přejde ze stavu $i$ do stavu $j$ $(j,i \in S)$.
+
+Lze ukázat, že
+\begin{enumerate}
+\item $Y_i$ je náhodná veličina s exponenciálním rozložením s parametrem $q_i$, tedy $E[Y_i]= \frac{1}{q_i}$.
+\item $p_{ij} = \frac{q_{ij}}{q_i}$ pro všechna $i,j \in S$.
+\end{enumerate}
+
+Všimněme si, že $Y_i(0) = 1, Y_i(\Delta)=1-q_i \Delta + \mathcal{O}(\Delta), \Delta \to 0^+$ tedy $$\frac{dY_i(t)}{dt}=-q_i \Rightarrow Y_i(t)=e^{-q_i t}.$$ Obdobně
+\begin{equation}
+\begin{split}
+p_{ij}  &=\lim_{\Delta \to 0^+} P\{X(\Delta)=j|X(\Delta) \neq i,X(0) = i\} = \lim_{\Delta \to 0^+} \frac{ P\{X(\Delta)=j \neq i,X(0) = i\} }{ P\{X(\Delta) \neq i,X(0) = i\} }\\
+        &=\lim_{\Delta \to 0^+} \frac{q_{ij} \Delta + \mathcal{O}(\Delta)}{q_i \Delta + \mathcal{O}(\Delta)}=\frac{q_{ij}}{q_i}.
+\end{split}
+\end{equation}
+Na rozdíl od diskrétního případu, ve spojitém modelu může dojít ke komplikacím vyvolaných tím, že sledovaný markovský proces vykoná nekonečně mnoho přechodů již v konečném čase.
+
+Označme proto symbolem $Z(t)$ počet přechodů markovského procesu do okamžiku $t$ a nechť $$\tau_\infty=\inf \{t>0|\lim_{s \to t-} Z(s) = \infty\}$$ je prvý okamžik $t$, ve kterém proces ``vykoná'' nekonečně mnoho přechodů. V tomto případě je trajektorie procesu ``rozumně'' definována pouze na intervalu $[0, \tau_\infty)$.
+
+V případě, že $q_i= \infty$ pro jisté $i \in S$ (takovému stavu $i$ říkáme okamžitý, anglicky instantaneous), potom $P\{\tau_\infty<\infty\}>0$. Avšak $P\{\tau_\infty >0\}>0$ může nastat i v případě, kdy uvažovaný markovský proces je konzervativní (tedy, kdy $\sum_{j \in S, j \neq i} q_{ij} = q_i < \infty$ pro všechna $i \in S$, avšak $q_i$ nejsou omezena nějakou konstantou).
+
+\begin{mydef}
+Markovský proces je regulární (anglicky regular), jestliže matice přechodových intenzit jednoznačně definuje matici přechodových pravděpodobností $P(t)$.
+\end{mydef}
+
+Požadavek na regularitu je v podstatě totéž jako požadavek, že $P\{\tau_\infty<\infty\}=0$, a proto platí
+\begin{proposition}
+Jestliže $\{q_i, i \in S\}$ jsou omezeny shora, potom markovský proces je regulární.
+\end{proposition}
+
+\subsection{Limitní chování}
+
+Předpokládejme, že platí podmínky 1'.-4'. a věnujme se limitnímu chování markovského procesu.
+
+\begin{proposition}
+Pro každé $i,j \in S$ existuje
+\begin{equation}
+P^*_{ij}=\lim_{t \to \infty} P_{ij}(t),(\text{kde }0 \leq P_{ij}^* \leq 1)
+\end{equation}
+\end{proposition}
+
+\begin{mydef}
+Stav $i \in S$ je rekurentní, jestliže 
+$$
+E[\text{celková doba strávená ve stavu }i|X(0)=i] \equiv \int_0^\infty P_{ii}(t) \ dt = +\infty.
+$$
+\end{mydef}
+
+Stav $i \in S$, který není rekurentní, se jmenuje tranzientní (v tomto případě $P^*_{ii}=0$). Rekurentní stav je nulově rekurentní (anglicky null recurrent), jestliže $P_{ii}^*=0$; ve zbývajícím případě je pozitivně rekurentní.
+
+\begin{mydef}
+Jestliže $P_{ij}(t)>0$ pro jisté $t>0$, stav $j$ je dosažitelný ze stavu $i$ (píšeme $i \rightarrow j$). Jestliže  $i \rightarrow j$, $j \rightarrow i$, potom stavy $i$ a $j$ jsou sousledné (píšeme $i \leftrightarrow j$). Jestliže stavový prostor $S$ obsahuje jedinou třídu sousledných stavů, potom markovský proces je irreducibilní (nerozložitelný). 
+\end{mydef}
+
+\begin{proposition}
+Je-li markovský proces nerozložitelný, potom buď
+\begin{enumerate}
+\item $\lim_{t \to \infty} P_{ij}(t) = P_j^* >0$ (všechny stavy jsou pozitivně rekurentní)
+\item $\lim_{t \to \infty} P_{ij}(t) = 0$ a $\lim_{t \to \infty} \int_0^t P_{ii}(s) \ ds = \infty$ (všechny stavy jsou nulově rekurentní)
+\item $\lim_{t \to \infty} P_{ij}(t) = 0$ a $\lim_{t \to \infty} \int_0^t P_{ii}(s) \ ds < \infty$ (všechny stavy tranzientní).
+\end{enumerate}
+\end{proposition}
+
+\subsection[Procesy rozmnožování a úmrtí]{Procesy rozmnožování a úmrtí\footnote{Též procesy růstu a zániku -- anglicky birth and death processes.}
+}
+Proces rozmnožování a úmrtí (birth and death process) je speciálním případem markovského procesu, kde pro přechodové intenzity platí (stavový prostor $S=\{0,1,2,...\}$)
+\begin{gather*}
+q_{00} = -\lambda_0\\
+q_{01} = \lambda_0 >0\\
+q_{i,i} = -(\lambda_i+\mu_i) \text{ pro }i \geq 1\\
+q_{i,i-1} = \mu_i>0 \text{ pro }i \geq 1\\
+q_{i,i+1} = \lambda_i > 0 \text{ pro }i \geq 1\\
+q_{ij} = 0 \text{ jinde.}
+\end{gather*}
+
+Zajímame-li se o limitní rozložení procesu rození a úmrtí (tedy chceme nalézt $\lim_{t \to \infty} P_{ij}(t) = P_j^*$ -- sledovaný proces je zřejmě nerozložitelný). Z Kolmogorovovy rovnice (\ref{eq:retrospectiveKol}) (nebo porovnáním intenzit přechodu do stavu $i+1$ a $i-1$ ze stavu $i$) zjistíme, že limitní pravděpodobnosti musí splňovat soustavu rovnic
+\begin{gather*}
+\lambda_0 P_0^* = \mu_1 P_1^*\\
+(\lambda_1 + \mu_1)P_1^* = \mu_2 P^*_2 + \lambda_0 P_0^*\\
+\vdots\\
+(\lambda_n + \mu_n)P_n^* = \mu_{n+1}P_{n+1}^*+\lambda_{n-1}P_{n-1}^*.
+\end{gather*}
+
+Řešením této soustavy rovnic je 
+\begin{gather*}
+P_1^* = \frac{\lambda_0}{\mu_1} P_0^*\\
+P_2^* = \frac{\lambda_1}{\mu_2} P_1^* = \frac{\lambda_1 \lambda_0}{\mu_2 \mu_1} P_0^* \\
+\vdots
+\end{gather*}
+kde $\sum_{n=0}^\infty P_n^*=1$.
+
+Po snadných algebraických úpravách zjistíme, že 
+\begin{gather*}
+P_0^* = \frac{1}{1+\sum_{n=1}^\infty \frac{\lambda_0 \lambda_1 ... \lambda_{n-1}}{\mu_1 \mu_2 ... \mu_n }}\\
+P^*_n = \frac{\lambda_0 \lambda_1 ... \lambda_{n-1}}{\mu_1 \mu_2 ... \mu_n (1+\sum_{n=1}^\infty \frac{\lambda_0 \lambda_1 ... \lambda_{n-1}}{\mu_1 \mu_2 ... \mu_n }) }
+\end{gather*}
+Lze ukázat, že za podmínky $\sum_{n=1}^\infty \frac{\lambda_0 \lambda_1 ... \lambda_{n-1}}{\mu_1 \mu_2 ... \mu_n }<\infty$ je $P^*_n > 0$ a tedy proces je pozitivně rekurentní.
+
+\subsection{Markovský model systému hromadné obsluhy}
+
+Uvažujme systém hromadné obsluhy s $S$ obsluhovacími linkami, u něhož se příchod zákazníků řídí Poissonovským rozložením s parametrem $\lambda$ a doba obsluhy u každé linky se řídí negativně exponenciálním rozložením s parametrem $\mu$. V terminologii hromadné obsluhy jde tedy o systém M|M|S (vstupní proud ... memoryless|doba obsluhy ... memoryless|počet linek).
+
+Symbolem $Q(t)$ označíme počet zákazníků přítomných v systému v čase $t>0$. Proces $\{Q(t),t\geq 0\}$ je Markovův řetězec se spojitým časem, navíc je to proces typu rozmnožování a úmrtí, kde 
+\begin{gather*}
+q_{i,i+1} = \lambda_i = \lambda \text{ pro } i \geq 0\\
+q_{i,i-1} = \mu_i = i \mu \text{ pro }1 \leq i < S\\
+q_{i,i-1} = \mu_i = S \mu \text{ pro } i \geq S
+\end{gather*}
+
+Tedy matice přechodových intenzit je ve tvaru:
+\begin{equation*}
+Q = 
+\begin{bmatrix}
+-\lambda & \lambda &0&0&0&\cdots\\
+\mu& -(\mu+\lambda) & \lambda & 0 &0& \cdots\\
+0 & 2\mu& -(2\mu+\lambda) & \lambda & 0 & \cdots\\
+\vdots&\vdots&\vdots&\vdots&\vdots&\ddots
+\end{bmatrix}.
+\end{equation*}
+Po dosazení do obecných vztahů pro limitní pravděpodobnosti máme:
+\begin{gather*}
+P_i^* = \frac{\lambda^i}{i!\mu^i}P_0^* \text{ pro } 1 \leq i \leq S-1\\
+P_i^* = \left(\frac{\lambda^s}{s! \mu^s} \right) \left(\frac{\lambda}{s \mu} \right)^{s-i} P_0^* \text{ pro } i \geq S
+\end{gather*}
+kde $$P_0^*= \frac{1}{1+\sum_{i=1}^{S-1}\frac{\lambda^i}{i! \mu^i}+\sum_{i=S}^{\infty}\frac{\lambda^i}{(S \mu)^i} }.$$
+V případě, že $$\rho \equiv \frac{\lambda}{S \mu}<1, \sum_{i=1}^\infty \frac{\lambda^i}{(S\mu)^i} < \infty$$ a všechny stavy jsou pozitivně rekurentní.
+
+\section{Semimarkovské procesy}
+
+Semimarkovovské procesy zobecňují markovské řetězce se spojitým i diskrétním časovým parametrem.
+
+Samimarkovský proces $\{X(t),t \geq 0\}$ je náhodný proces nabývající hodnot v konečném (nebo nanejvýše spočetném) stavovém prostoru $S$, který je určen
+\begin{enumerate}
+\item Maticí $P=[p_{ij}]$ přechodových pravděpodobností mezi jednotlivými stavy ($i,j \in S$).
+\item Pravděpodobnostním rozložením dob setrvání v jednotlivých stavech, které závisí pouze na dosaženém stavu, tedy pro každé $i \in S$ máme zadanou distribuční funkci $F_i(t)$ kladných náhodných veličin (předpokládá se, že její střední hodnota $\mu_i < \infty$).
+\end{enumerate}
+
+V případě, že $F_i(t)$ nabývá hodnot 0,1 a $F_i(t) \equiv F(t)$ pro všechna $i \in S$, jde o diskrétní markovský řetězec. V případě, že $F_i(t)$ se řídí negativně exponenciálním rozložením s parametrem $q_i$, jde o markovský proces se spojitým časem.
+
+Trajektorie semimarkovského procesu $\{X(t), t \geq 0\}$ se realizuje následovně:
+
+S počátečním rozložením se realizuje stav $\xi_1 \in S$, v tomto stavu proces setrvá po náhodnou dobu $\tau_1$ s distribuční funkcí $F_{\xi_1}(t)$, potom proces přejde do stavu $k \in S$ s pravděpodobností $p_{\xi_1,k}$, kde setrvá po náhodnou dobu $\tau_2$ s distribuční funkcí $F_{\xi_2}(t)$ atd.
+
+Předpokládejme, že přechodová matice $P$ má jedinou třídu rekurentních stavů a že má limitní rozložení 
+$$
+P^* = 
+\begin{bmatrix}
+\pi_1 & \pi_2 & \cdots & \pi_N \\ 
+\pi_1 & \pi_2 & \cdots & \pi_N \\ 
+\vdots & \vdots & \ddots & \vdots\\
+\pi_1 & \pi_2 & \cdots & \pi_N \\ 
+\end{bmatrix}.
+$$Potom lze ukázat, že pro limitní pravděpodobnost, pokud uvažovaný semimarkovský proces bude ve stavu $i$, platí $$\bar{P}^*_i = \frac{\pi_i \mu_i}{\sum_{j=1}^N \pi_j \mu_j}$$ tedy $\bar{P}^*_i$ je dáno ``váženými'' limitními pravděpodobnostmi, tzv. ``vloženého'' markovova řetězce.
+
+\subsection{Základní modely hromadné obsluhy}
+
+TADY BUDE OBRÁZEK
+
+Mezi základní předpoklady patří:
+\begin{itemize}
+\item Doby mezi příchody jednotlivých zákazníků jsou nezávislé náhodné proměnné se stejným rozložením (tj. vstupní proud je Poissonův proces)-
+\item Obsluhovací mechanismus -- $S$ paralelních obsluhovacích linek; doby obsluhy jsou nezávislé náhodné proměnné se stejným rozložením.
+\item Čekací fronta má nekonečnou kapacitu.
+\item Obsluhovací disciplína je FIFO (first in, first out), tj. přišedší zákazník si najde prázdnou linku, jinak se zařadí na konec fronty. Po uvolnění obsluhovací linky přichází na řadu zákazník stojící ve frontě nejdříve.
+\end{itemize}
+Symbolika pro systémy hromadné obsluhy je $\cdot | \cdot | S$, kde 
+
+$S$: počet obsluhovacích linek,
+
+$M$: negativně exponenciální rozdělení,
+
+$D$: deterministické doby,
+
+$E_k$: Erlangovo rozložení řádu $k$.
+
+Tedy například $G|E_2|2$.
+
+\section{Modely se spojitými stavy}
+
+\subsection{Základní vlastnosti Wienerova procesu}
+Standardní Wienerův proces $W=\{W(t),t \geq 0 \}$ je náhodný proces s těmito vlastnostmi:
+\begin{enumerate}
+\item $W(0)=0$
+\item Pro každé $0 \leq s < t < \infty$ přírůstek $W(t)-W(s)$ je nezávislý na hodnotách $\{W(\mu):0 \leq \mu < s\}$ a řídí se normálním rozdělením s nulovou střední hodnotou a rozptylem $t-s$.
+\item Trajektorie procesu $W=\{W(t),t \geq 0 \}$ jsou spojité s pravděpodobností 1.
+\end{enumerate}
+\end{document}
